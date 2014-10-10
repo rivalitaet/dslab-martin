@@ -7,8 +7,7 @@ public interface ICloudControllerCli {
 	// --- Commands needed for Lab 1 ---
 
 	/**
-	 * Prints out some information about each known node in the cloud, running
-	 * or idle.<br/>
+	 * Prints out some information about each known node in the cloud, running or idle.<br/>
 	 * 
 	 * @return information about the nodes
 	 * @throws IOException
@@ -16,8 +15,8 @@ public interface ICloudControllerCli {
 	String nodes() throws IOException;
 
 	/**
-	 * Prints out some information about each user, containing username, login
-	 * status (online/offline) and credits.<br/>
+	 * Prints out some information about each user, containing username, login status
+	 * (online/offline) and credits.<br/>
 	 * 
 	 * @return the user information
 	 * @throws IOException
@@ -36,9 +35,8 @@ public interface ICloudControllerCli {
 	 * &gt; !exit
 	 * Shutting down cloud controller now
 	 * </pre>
-	 *
-	 * @return any message indicating that the cloud controller is going to
-	 *         terminate
+	 * 
+	 * @return any message indicating that the cloud controller is going to terminate
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */

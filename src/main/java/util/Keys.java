@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Please note that this class is not needed for Lab 1, but can later be
- * used in Lab 2.
+ * Please note that this class is not needed for Lab 1, but can later be used in Lab 2.
  * 
  * Reads encryption keys from the file system.
  */
@@ -32,24 +31,19 @@ public final class Keys {
 
 	/**
 	 * Reads the {@link PrivateKey} from the given location.
-	 *
+	 * 
 	 * @param file
 	 *            the path to key located in the file system
 	 * @return the private key
 	 * @throws IOException
-	 *             if an I/O error occurs or the security provider cannot handle
-	 *             the file
+	 *             if an I/O error occurs or the security provider cannot handle the file
 	 */
 	public static PrivateKey readPrivatePEM(File file) throws IOException {
-		/*
-		 * You can switch to the PasswordReader to read the passwords from the
-		 * command line.
-		 */
+		/* You can switch to the PasswordReader to read the passwords from the command line. */
 		// PEMReader in = new PEMReader(new FileReader(file), new
 		// PasswordReader(file.getName()));
 
-		PEMReader in = new PEMReader(new FileReader(file),
-				new StaticPasswordReader(file.getName()));
+		PEMReader in = new PEMReader(new FileReader(file), new StaticPasswordReader(file.getName()));
 
 		try {
 			KeyPair keyPair = (KeyPair) in.readObject();
@@ -63,13 +57,12 @@ public final class Keys {
 
 	/**
 	 * Reads the {@link PublicKey} from the given location.
-	 *
+	 * 
 	 * @param file
 	 *            the path to key located in the file system
 	 * @return the public key
 	 * @throws IOException
-	 *             if an I/O error occurs or the security provider cannot handle
-	 *             the file
+	 *             if an I/O error occurs or the security provider cannot handle the file
 	 */
 	public static PublicKey readPublicPEM(File file) throws IOException {
 		PEMReader in = new PEMReader(new FileReader(file));
@@ -82,21 +75,19 @@ public final class Keys {
 
 	/**
 	 * Reads the {@link SecretKeySpec} from the given location.
-	 *
+	 * 
 	 * @param file
 	 *            the path to key located in the file system
 	 * @return the secret key
 	 * @throws IOException
-	 *             if an I/O error occurs or the security provider cannot handle
-	 *             the file
+	 *             if an I/O error occurs or the security provider cannot handle the file
 	 */
 	public static Key readSecretKey(File file) throws IOException {
 		FileInputStream fis = new FileInputStream(file);
 		try {
 			byte[] keyBytes = new byte[1024];
 			if (fis.read(keyBytes) < 0) {
-				throw new IOException(String.format("Cannot read key file %s.",
-						file.getCanonicalPath()));
+				throw new IOException(String.format("Cannot read key file %s.", file.getCanonicalPath()));
 			}
 			byte[] input = Hex.decode(keyBytes);
 			return new SecretKeySpec(input, "HmacSHA256");
@@ -120,11 +111,9 @@ public final class Keys {
 		public char[] getPassword() {
 			System.out.printf("Enter pass phrase for %s:", this.keyName);
 			try {
-				return new BufferedReader(new InputStreamReader(System.in))
-						.readLine().toCharArray();
+				return new BufferedReader(new InputStreamReader(System.in)).readLine().toCharArray();
 			} catch (IOException ex) {
-				throw new RuntimeException("Unable to read pass: "
-						+ ex.getMessage());
+				throw new RuntimeException("Unable to read pass: " + ex.getMessage());
 			}
 		}
 	}
@@ -132,8 +121,8 @@ public final class Keys {
 	/**
 	 * Holds a table of passwords for key files.
 	 * <p/>
-	 * <b>Note that this class can be used alternatively to
-	 * {@link PasswordReader} especially for test automation.</b>
+	 * <b>Note that this class can be used alternatively to {@link PasswordReader} especially for
+	 * test automation.</b>
 	 */
 	public static class StaticPasswordReader implements PasswordFinder {
 
@@ -148,15 +137,14 @@ public final class Keys {
 		public char[] getPassword() {
 			String password = passwordMap.get(keyName);
 			if (password == null) {
-				throw new RuntimeException("No password for key file "
-						+ keyName);
+				throw new RuntimeException("No password for key file " + keyName);
 			}
 			return password.toCharArray();
 		}
 
 		/**
 		 * Sets the password to use for decrypting the given key file.
-		 *
+		 * 
 		 * @param keyName
 		 *            the name of the file to use the password for
 		 * @param password

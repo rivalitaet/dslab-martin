@@ -12,14 +12,18 @@ public final class TestUtils {
 	}
 
 	/**
-	 * Returns a string consisting of a specific number of concatenated copies of an input character.<br/>
+	 * Returns a string consisting of a specific number of concatenated copies of an input
+	 * character.<br/>
 	 * For example, {@code repeat('x', 3)} returns the string {@code "xxx"}.
-	 *
-	 * @param character the character to repeat
-	 * @param count     the number of times to repeat it; a nonnegative integer
-	 * @return a string containing {@code character} repeated {@code count} times
-	 * (the empty string if {@code count} is zero)
-	 * @throws IllegalArgumentException if {@code count} is negative
+	 * 
+	 * @param character
+	 *            the character to repeat
+	 * @param count
+	 *            the number of times to repeat it; a nonnegative integer
+	 * @return a string containing {@code character} repeated {@code count} times (the empty string
+	 *         if {@code count} is zero)
+	 * @throws IllegalArgumentException
+	 *             if {@code count} is negative
 	 */
 	public static char[] repeat(char character, int count) {
 		if (count < 0) {
@@ -31,13 +35,15 @@ public final class TestUtils {
 	}
 
 	/**
-	 * Returns {@code true} if the given array contains the specified element.
-	 * More formally, returns {@code true} if and only if this collection contains at least one element <tt>e</tt> such
-	 * that <tt>(objectToFind.equals(e))</tt>.
-	 *
-	 * @param objectToFind element whose presence in the array is to be tested
+	 * Returns {@code true} if the given array contains the specified element. More formally,
+	 * returns {@code true} if and only if this collection contains at least one element <tt>e</tt>
+	 * such that <tt>(objectToFind.equals(e))</tt>.
+	 * 
+	 * @param objectToFind
+	 *            element whose presence in the array is to be tested
 	 * @return {@code true} if the array contains the specified element, {@code false} otherwise
-	 * @throws NullPointerException if the specified element is null
+	 * @throws NullPointerException
+	 *             if the specified element is null
 	 */
 	public static boolean contains(Object objectToFind, Object... array) {
 		if (array != null && array.getClass().getComponentType().isInstance(objectToFind)) {
@@ -51,14 +57,17 @@ public final class TestUtils {
 	}
 
 	/**
-	 * Returns a new String composed of copies of the {@code strings} joined together with a copy
-	 * of the specified {@code separator}.
+	 * Returns a new String composed of copies of the {@code strings} joined together with a copy of
+	 * the specified {@code separator}.
 	 * <p/>
 	 * Note that if an element is {@code null}, then {@code "null"} is added.
-	 *
-	 * @param separator the delimiter that separates each element
-	 * @param strings   the elements to join together.
-	 * @return a new {@code String} that is composed of the {@code strings} separated by the {@code separator}
+	 * 
+	 * @param separator
+	 *            the delimiter that separates each element
+	 * @param strings
+	 *            the elements to join together.
+	 * @return a new {@code String} that is composed of the {@code strings} separated by the
+	 *         {@code separator}
 	 */
 	public static String join(String separator, List<String> strings) {
 		StringBuilder appendable = new StringBuilder();

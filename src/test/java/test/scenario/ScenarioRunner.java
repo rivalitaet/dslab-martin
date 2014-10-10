@@ -74,13 +74,14 @@ public class ScenarioRunner extends BlockJUnit4ClassRunner {
 
 	/**
 	 * Registers the scenario in the given directory with all its steps.
-	 *
-	 * @param scenarioDir the directory containing the step files
+	 * 
+	 * @param scenarioDir
+	 *            the directory containing the step files
 	 */
 	private void addScenario(Path scenarioDir) {
 		for (Path path : ScenarioUtils.listSteps(scenarioDir)) {
-			Description stepDescription = Description.createTestDescription(getTestClass().getJavaClass().getName(),
-					getBaseName(path.getFileName().toString()));
+			Description stepDescription = Description.createTestDescription(getTestClass().getJavaClass()
+			                .getName(), getBaseName(path.getFileName().toString()));
 			description.addChild(stepDescription);
 			steps.add(new Step(stepDescription, path));
 		}
@@ -88,8 +89,9 @@ public class ScenarioRunner extends BlockJUnit4ClassRunner {
 
 	/**
 	 * Returns the unqualified filename without extension.
-	 *
-	 * @param name the filename
+	 * 
+	 * @param name
+	 *            the filename
 	 * @return the base name
 	 */
 	private static String getBaseName(String name) {

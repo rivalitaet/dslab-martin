@@ -26,7 +26,7 @@ public interface INodeCli {
 	 * &gt; !exit
 	 * Shutting down node now
 	 * </pre>
-	 *
+	 * 
 	 * @return any message indicating that the node is going to terminate
 	 * @throws IOException
 	 *             if an I/O error occurs
@@ -35,10 +35,10 @@ public interface INodeCli {
 
 	// --- Commands needed for Lab 2. Please note that you do not have to
 	// implement them for the first submission. ---
-	
+
 	/**
-	 * Prints out information about the current resource level of the node (the
-	 * amount of resources of the last negotiation).
+	 * Prints out information about the current resource level of the node (the amount of resources
+	 * of the last negotiation).
 	 * 
 	 * @return the current resource level of the node
 	 * @throws IOException

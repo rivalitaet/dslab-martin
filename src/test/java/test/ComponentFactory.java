@@ -17,64 +17,53 @@ import util.TestOutputStream;
  */
 public class ComponentFactory {
 	/**
-	 * Creates and starts a new client instance using the provided
-	 * {@link Config} and I/O streams.
-	 *
+	 * Creates and starts a new client instance using the provided {@link Config} and I/O streams.
+	 * 
 	 * @param componentName
 	 *            the name of the component to create
 	 * @return the created component after starting it successfully
 	 * @throws Exception
 	 *             if an exception occurs
 	 */
-	public IClientCli createClient(String componentName, TestInputStream in,
-			TestOutputStream out) throws Exception {
-		/*
-		 * TODO: Here you can do anything in order to construct a node instance.
-		 * Depending on your code you might want to modify the following lines
-		 * but you do not have to.
-		 */
+	public IClientCli createClient(String componentName, TestInputStream in, TestOutputStream out)
+	                throws Exception {
+		/* TODO: Here you can do anything in order to construct a node instance. Depending on your
+		 * code you might want to modify the following lines but you do not have to. */
 		Config config = new Config("client");
 		return new Client(componentName, config, in, out);
 	}
 
 	/**
-	 * Creates and starts a new cloud controller instance using the provided
-	 * {@link Config} and I/O streams.
-	 *
+	 * Creates and starts a new cloud controller instance using the provided {@link Config} and I/O
+	 * streams.
+	 * 
 	 * @param componentName
 	 *            the name of the component to create
 	 * @return the created component after starting it successfully
 	 * @throws Exception
 	 *             if an exception occurs
 	 */
-	public ICloudControllerCli createCloudController(String componentName,
-			TestInputStream in, TestOutputStream out) throws Exception {
-		/*
-		 * TODO: Here you can do anything in order to construct a node instance.
-		 * Depending on your code you might want to modify the following lines
-		 * but you do not have to.
-		 */
+	public ICloudControllerCli createCloudController(String componentName, TestInputStream in,
+	                TestOutputStream out) throws Exception {
+		/* TODO: Here you can do anything in order to construct a node instance. Depending on your
+		 * code you might want to modify the following lines but you do not have to. */
 		Config config = new Config("controller");
 		return new CloudController(componentName, config, in, out);
 	}
 
 	/**
-	 * Creates and starts a new node instance using the provided {@link Config}
-	 * and I/O streams.
-	 *
+	 * Creates and starts a new node instance using the provided {@link Config} and I/O streams.
+	 * 
 	 * @param componentName
 	 *            the name of the component to create
 	 * @return the created component after starting it successfully
 	 * @throws Exception
 	 *             if an exception occurs
 	 */
-	public INodeCli createNode(String componentName, TestInputStream in,
-			TestOutputStream out) throws Exception {
-		/*
-		 * TODO: Here you can do anything in order to construct a node instance.
-		 * Depending on your code you might want to modify the following lines
-		 * but you do not have to.
-		 */
+	public INodeCli createNode(String componentName, TestInputStream in, TestOutputStream out)
+	                throws Exception {
+		/* TODO: Here you can do anything in order to construct a node instance. Depending on your
+		 * code you might want to modify the following lines but you do not have to. */
 		Config config = new Config(componentName);
 		return new Node(componentName, config, in, out);
 	}
@@ -83,22 +72,19 @@ public class ComponentFactory {
 	// use them for the first submission. ---
 
 	/**
-	 * Creates and starts a new admin console instance using the provided
-	 * {@link Config} and I/O streams.
-	 *
+	 * Creates and starts a new admin console instance using the provided {@link Config} and I/O
+	 * streams.
+	 * 
 	 * @param componentName
 	 *            the name of the component to create
 	 * @return the created component after starting it successfully
 	 * @throws Exception
 	 *             if an exception occurs
 	 */
-	public IAdminConsole createAdminConsole(String componentName,
-			TestInputStream in, TestOutputStream out) throws Exception {
-		/*
-		 * TODO: Here you can do anything in order to construct a node instance.
-		 * Depending on your code you might want to modify the following lines
-		 * but you do not have to.
-		 */
+	public IAdminConsole createAdminConsole(String componentName, TestInputStream in, TestOutputStream out)
+	                throws Exception {
+		/* TODO: Here you can do anything in order to construct a node instance. Depending on your
+		 * code you might want to modify the following lines but you do not have to. */
 		Config config = new Config("admin");
 		return new AdminConsole(componentName, config, in, out);
 	}

@@ -23,8 +23,8 @@ public class Node implements INodeCli, Runnable {
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
 	 */
-	public Node(String componentName, Config config,
-			InputStream userRequestStream, PrintStream userResponseStream) {
+	public Node(String componentName, Config config, InputStream userRequestStream,
+	                PrintStream userResponseStream) {
 		this.componentName = componentName;
 		this.config = config;
 		this.userRequestStream = userRequestStream;
@@ -52,12 +52,11 @@ public class Node implements INodeCli, Runnable {
 
 	/**
 	 * @param args
-	 *            the first argument is the name of the {@link Node} component,
-	 *            which also represents the name of the configuration
+	 *            the first argument is the name of the {@link Node} component, which also
+	 *            represents the name of the configuration
 	 */
 	public static void main(String[] args) {
-		Node node = new Node(args[0], new Config(args[0]), System.in,
-				System.out);
+		Node node = new Node(args[0], new Config(args[0]), System.in, System.out);
 		// TODO: start the node
 	}
 

@@ -14,9 +14,9 @@ public final class Config {
 	private Map<String, Object> properties = new HashMap<>();
 
 	/**
-	 * Creates an instance of Config which reads configuration data form
-	 * {@code .properties} file with given name found in classpath.
-	 *
+	 * Creates an instance of Config which reads configuration data form {@code .properties} file
+	 * with given name found in classpath.
+	 * 
 	 * @param name
 	 *            the name of the .properties file
 	 */
@@ -26,7 +26,7 @@ public final class Config {
 
 	/**
 	 * Returns the value as String for the given key.
-	 *
+	 * 
 	 * @param key
 	 *            the property's key
 	 * @return String value of the property
@@ -41,7 +41,7 @@ public final class Config {
 
 	/**
 	 * Returns the value as {@code int} for the given key.
-	 *
+	 * 
 	 * @param key
 	 *            the property's key
 	 * @return int value of the property
@@ -54,7 +54,7 @@ public final class Config {
 
 	/**
 	 * Sets the value for the given key.
-	 *
+	 * 
 	 * @param key
 	 *            the property's key
 	 * @param value
@@ -66,7 +66,7 @@ public final class Config {
 
 	/**
 	 * Returns all keys of this configuration.
-	 *
+	 * 
 	 * @return the keys
 	 */
 	public Set<String> listKeys() {

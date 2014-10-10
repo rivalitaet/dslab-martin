@@ -1,9 +1,5 @@
 package admin;
 
-import controller.IAdminConsole;
-import model.ComputationRequestInfo;
-import util.Config;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
@@ -11,10 +7,13 @@ import java.security.Key;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import model.ComputationRequestInfo;
+import util.Config;
+import controller.IAdminConsole;
+
 /**
- * Please note that this class is not needed for Lab 1, but will later be
- * used in Lab 2. Hence, you do not have to implement it for the first
- * submission.
+ * Please note that this class is not needed for Lab 1, but will later be used in Lab 2. Hence, you
+ * do not have to implement it for the first submission.
  */
 public class AdminConsole implements IAdminConsole, Runnable {
 
@@ -33,8 +32,8 @@ public class AdminConsole implements IAdminConsole, Runnable {
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
 	 */
-	public AdminConsole(String componentName, Config config,
-			InputStream userRequestStream, PrintStream userResponseStream) {
+	public AdminConsole(String componentName, Config config, InputStream userRequestStream,
+	                PrintStream userResponseStream) {
 		this.componentName = componentName;
 		this.config = config;
 		this.userRequestStream = userRequestStream;
@@ -49,8 +48,8 @@ public class AdminConsole implements IAdminConsole, Runnable {
 	}
 
 	@Override
-	public boolean subscribe(String username, int credits,
-			INotificationCallback callback) throws RemoteException {
+	public boolean subscribe(String username, int credits, INotificationCallback callback)
+	                throws RemoteException {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -74,19 +73,16 @@ public class AdminConsole implements IAdminConsole, Runnable {
 	}
 
 	@Override
-	public void setUserPublicKey(String username, byte[] key)
-			throws RemoteException {
+	public void setUserPublicKey(String username, byte[] key) throws RemoteException {
 		// TODO Auto-generated method stub
 	}
 
 	/**
 	 * @param args
-	 *            the first argument is the name of the {@link AdminConsole}
-	 *            component
+	 *            the first argument is the name of the {@link AdminConsole} component
 	 */
 	public static void main(String[] args) {
-		AdminConsole adminConsole = new AdminConsole(args[0], new Config(
-				"admin"), System.in, System.out);
+		AdminConsole adminConsole = new AdminConsole(args[0], new Config("admin"), System.in, System.out);
 		// TODO: start the admin console
 	}
 }

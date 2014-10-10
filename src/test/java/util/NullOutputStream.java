@@ -3,7 +3,8 @@ package util;
 import java.io.OutputStream;
 
 /**
- * This {@link OutputStream} has no destination (file/socket etc.) and all bytes written to it are ignored and lost.
+ * This {@link OutputStream} has no destination (file/socket etc.) and all bytes written to it are
+ * ignored and lost.
  */
 public final class NullOutputStream extends OutputStream {
 	public static final OutputStream INSTANCE = new NullOutputStream();

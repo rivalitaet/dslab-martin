@@ -9,8 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Simulates writing lines to an {@link PrintStream}.
  * <p/>
- * Internally, the lines written to the underlying {@link PrintStream} are buffered and can be retrieved on demand for
- * verification purposes.
+ * Internally, the lines written to the underlying {@link PrintStream} are buffered and can be
+ * retrieved on demand for verification purposes.
  */
 public class TestOutputStream extends PrintStream {
 	private final Queue<String> lines = new LinkedBlockingQueue<>();
@@ -26,8 +26,9 @@ public class TestOutputStream extends PrintStream {
 
 	/**
 	 * Creates a new {@code TestOutputStream} instance writing to the provided {@link PrintStream}.
-	 *
-	 * @param delegate the stream to write to
+	 * 
+	 * @param delegate
+	 *            the stream to write to
 	 */
 	public TestOutputStream(PrintStream delegate) {
 		super(delegate);
@@ -56,19 +57,20 @@ public class TestOutputStream extends PrintStream {
 	public void write(byte b[], int off, int len) {
 		if (b == null) {
 			throw new NullPointerException();
-		} else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0)) {
+		} else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length)
+		                || ((off + len) < 0)) {
 			throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 			return;
 		}
-		for (int i = 0 ; i < len ; i++) {
+		for (int i = 0; i < len; i++) {
 			write(b[off + i]);
 		}
 	}
 
 	/**
 	 * Returns a copy of the lines written to the {@link PrintStream} so far.
-	 *
+	 * 
 	 * @return the written lines
 	 */
 	public List<String> getLines() {
@@ -82,7 +84,7 @@ public class TestOutputStream extends PrintStream {
 
 	/**
 	 * Returns a copy of the lines written to the {@link PrintStream} so far and clears the buffer.
-	 *
+	 * 
 	 * @return the written lines
 	 * @see #getLines()
 	 * @see #clear()

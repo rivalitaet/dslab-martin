@@ -1,10 +1,10 @@
 package controller;
 
-import util.Config;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+
+import util.Config;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
@@ -23,8 +23,8 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
 	 */
-	public CloudController(String componentName, Config config,
-			InputStream userRequestStream, PrintStream userResponseStream) {
+	public CloudController(String componentName, Config config, InputStream userRequestStream,
+	                PrintStream userResponseStream) {
 		this.componentName = componentName;
 		this.config = config;
 		this.userRequestStream = userRequestStream;
@@ -58,12 +58,11 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 	/**
 	 * @param args
-	 *            the first argument is the name of the {@link CloudController}
-	 *            component
+	 *            the first argument is the name of the {@link CloudController} component
 	 */
 	public static void main(String[] args) {
-		CloudController cloudController = new CloudController(args[0],
-				new Config("controller"), System.in, System.out);
+		CloudController cloudController = new CloudController(args[0], new Config("controller"), System.in,
+		                System.out);
 		// TODO: start the cloud controller
 	}
 

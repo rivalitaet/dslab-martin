@@ -69,21 +69,18 @@ public class ScenarioTest {
 		List<String> lines = Files.readAllLines(stepFile, Charset.defaultCharset());
 		System.out.println(stepFile.getFileName().toString());
 		for (String line : lines) {
-			/*
-			 * Comment
-			 */
+			/* Comment */
 			if (line == null || line.isEmpty() || line.startsWith("#")) {
 				// Intentionally do nothing
 			}
-			/*
-			 * Component
-			 */
+			/* Component */
 			else if (line.startsWith("*")) {
 				String[] parts = line.split(":?\\s+", 3);
 				String instruction = "create" + parts[1];
 				String componentName = parts[2];
 
-				Method method = factory.getClass().getMethod(instruction, String.class, TestInputStream.class, TestOutputStream.class);
+				Method method = factory.getClass().getMethod(instruction, String.class,
+				                TestInputStream.class, TestOutputStream.class);
 				if (method == null) {
 					throw new IllegalArgumentException(String.format("Method '%s' not found.", instruction));
 				}
@@ -98,9 +95,7 @@ public class ScenarioTest {
 				}
 				Thread.sleep(Constants.WAIT_FOR_COMPONENT_STARTUP);
 			}
-			/*
-			 * SpEL expression
-			 */
+			/* SpEL expression */
 			else if (line.startsWith(">")) {
 				try {
 					parser.parseExpression((line.substring(1).trim())).getValue(ctx);
@@ -116,15 +111,13 @@ public class ScenarioTest {
 					}
 				}
 			}
-			/*
-			 * CLI
-			 */
+			/* CLI */
 			else {
 				String[] parts = line.split("[:\\s+]", 2);
 				component = componentMap.get(parts[0]);
 				if (component == null) {
 					throw new IllegalStateException(String.format(
-							"Cannot find component '%s'. Please start it before using it.", parts[0]));
+					                "Cannot find component '%s'. Please start it before using it.", parts[0]));
 				}
 				component.in.addLine(parts[1].trim());
 				Thread.sleep(500);
@@ -135,12 +128,15 @@ public class ScenarioTest {
 	/**
 	 * Verifies that the output of the recently used component matches a certain condition.
 	 * <p/>
-	 * The data written to the {@link PrintStream} of component is compared against a {@link Matcher} built by the
-	 * expected String and {@link Flag}s. If it does not satisfy the condition, an {@link AssertionError} is thrown
-	 * with the reason and information about the matcher and failing value.
-	 *
-	 * @param expected the condition
-	 * @param flags    the flags defining the type of the matcher.
+	 * The data written to the {@link PrintStream} of component is compared against a
+	 * {@link Matcher} built by the expected String and {@link Flag}s. If it does not satisfy the
+	 * condition, an {@link AssertionError} is thrown with the reason and information about the
+	 * matcher and failing value.
+	 * 
+	 * @param expected
+	 *            the condition
+	 * @param flags
+	 *            the flags defining the type of the matcher.
 	 */
 	public void verify(String expected, Flag... flags) {
 		List<String> lines = component.out.reset();
@@ -160,11 +156,10 @@ public class ScenarioTest {
 			actual = actual.toLowerCase();
 		}
 
-		String msg = String.format("String must %s%s '%s' but was:%s",
-				contains(Flag.NOT, (Object[]) flags) ? "NOT " : "",
-				contains(Flag.REGEX, (Object[]) flags) ? "match pattern" : "contain",
-				expected,
-				lines.size() > 1 ? "\n" + actual : String.format(" '%s'", actual));
+		String msg = String.format("String must %s%s '%s' but was:%s", contains(Flag.NOT, (Object[]) flags)
+		                ? "NOT "
+		                : "", contains(Flag.REGEX, (Object[]) flags) ? "match pattern" : "contain", expected,
+		                lines.size() > 1 ? "\n" + actual : String.format(" '%s'", actual));
 
 		matcher = contains(Flag.NOT, (Object[]) flags) ? CoreMatchers.not(matcher) : matcher;
 

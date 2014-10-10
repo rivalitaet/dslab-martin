@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Simulates reading lines from an {@link InputStream}.
- *
- * Internally, the lines read from the underlying {@link InputStream} are buffered and can be retrieved on demand for
- * verification purposes.
+ * 
+ * Internally, the lines read from the underlying {@link InputStream} are buffered and can be
+ * retrieved on demand for verification purposes.
  */
 public class TestInputStream extends InputStream {
 	private volatile BlockingQueue<String> lines = new LinkedBlockingQueue<>();
@@ -37,9 +37,10 @@ public class TestInputStream extends InputStream {
 
 	/**
 	 * Returns a copy of the lines available for reading.
-	 *
+	 * 
 	 * @return the available lines
-	 * @throws IOException if the stream is closed
+	 * @throws IOException
+	 *             if the stream is closed
 	 */
 	public List<String> getLines() throws IOException {
 		List<String> copy = new ArrayList<>();
@@ -55,8 +56,9 @@ public class TestInputStream extends InputStream {
 
 	/**
 	 * Adds the given line to the input queue.
-	 *
-	 * @param line the line to add
+	 * 
+	 * @param line
+	 *            the line to add
 	 */
 	public void addLine(String line) {
 		lines.add(line);
@@ -66,9 +68,10 @@ public class TestInputStream extends InputStream {
 	 * Prepares the next line available for reading from it.
 	 * <p/>
 	 * This method blocks until a line is available or the stream becomes closed.
-	 *
+	 * 
 	 * @return the {@link InputStream} holding the line
-	 * @throws IOException if the stream is closed
+	 * @throws IOException
+	 *             if the stream is closed
 	 */
 	private InputStream nextLine() throws IOException {
 		try {
