@@ -83,6 +83,9 @@ public class Shell implements Runnable, Closeable {
 				Object result;
 				try {
 					result = invoke(line);
+				} catch (IllegalArgumentException e) {
+					result = e.getMessage();
+					// e.printStackTrace();
 				} catch (Throwable throwable) {
 					ByteArrayOutputStream str = new ByteArrayOutputStream(1024);
 					throwable.printStackTrace(new PrintStream(str, true));
