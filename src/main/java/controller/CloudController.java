@@ -6,8 +6,9 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import shell.CliShell;
+import shell.Shell;
 import util.Config;
-import cli.Shell;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
@@ -36,7 +37,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		this.config = config;
 		this.userRequestStream = userRequestStream;
 		this.userResponseStream = userResponseStream;
-		this.shell = new Shell(componentName, userRequestStream, userResponseStream);
+		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.tcpPort = config.getInt("tcp.port");
 		this.udpPort = config.getInt("udp.port");
 	}
@@ -54,9 +55,9 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		try (ServerSocket serverSocket = new ServerSocket(tcpPort)) {
 
 			while (true) {
-				try (Socket socket = serverSocket.accept();
-				     ClientConnection clientConnection = new ClientConnection(socket, this)) {
-
+				try {
+					Socket socket = serverSocket.accept();
+					ClientConnection clientConnection = new ClientConnection(socket, this);
 					Thread thread = new Thread(clientConnection);
 					thread.start();
 
@@ -80,7 +81,6 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			// who cares, if anything fails here, we can't do nothing anyways :)
 		}
 	}
-
 	@Override
 	public String nodes() throws IOException {
 		// TODO Auto-generated method stub
@@ -108,8 +108,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			System.out.println("usage: java CloudController <cloud-name>");
 			return;
 		}
-		CloudController cloudController = new CloudController(args[0], new Config("controller"), System.in,
-		                System.out);
+		CloudController cloudController = new CloudController(args[0], new Config("controller"), System.in, System.out);
 		Thread thread = new Thread(cloudController);
 		thread.start();
 	}

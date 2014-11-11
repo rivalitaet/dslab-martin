@@ -1,28 +1,27 @@
 package client;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
+import shell.CliShell;
+import shell.Command;
+import shell.Shell;
 import util.Config;
-import cli.Command;
-import cli.Shell;
 
-public class Client implements IClientCli, Runnable {
+public class Client implements IClientCli {
 
 	private final String componentName;
-	private final Config config;
 	private final InputStream userRequestStream;
 	private final PrintStream userResponseStream;
 	private final Shell shell;
 	private final Socket controllerSocket;
-	private final InputStream controllerOutput;
-	private final OutputStream controllerInput;
+	private final Scanner controllerScanner;
+	private final PrintWriter controllerWriter;
 
 	/**
 	 * @param componentName
@@ -39,7 +38,6 @@ public class Client implements IClientCli, Runnable {
 	public Client(String componentName, Config config, InputStream userRequestStream, PrintStream userResponseStream)
 	                throws UnknownHostException, IOException {
 		this.componentName = componentName;
-		this.config = config;
 		this.userRequestStream = userRequestStream;
 		this.userResponseStream = userResponseStream;
 
@@ -47,24 +45,38 @@ public class Client implements IClientCli, Runnable {
 		int controllerPort = config.getInt("controller.tcp.port");
 		controllerSocket = new Socket(controllerHost, controllerPort);
 
-		controllerOutput = new BufferedInputStream(controllerSocket.getInputStream());
-		controllerInput = new BufferedOutputStream(controllerSocket.getOutputStream());
+		controllerScanner = new Scanner(controllerSocket.getInputStream());
+		controllerWriter = new PrintWriter(controllerSocket.getOutputStream(), true);
 
-		this.shell = new Shell(componentName, userRequestStream, userResponseStream);
+		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.shell.register(this);
-	}
-
-	@Override
-	public void run() {
 		shell.run();
-	}
 
+	}
 	@Override
 	@Command
 	public String login(final String username, final String password) throws IOException {
-		String msg = String.format("LOGIN %s %s", username, password);
+		String msg = String.format("!LOGIN %s %s", username, password);
 
-		return msg;
+		controllerWriter.println(msg);
+
+		try {
+			while (controllerScanner.hasNextLine()) {
+				String line = controllerScanner.nextLine();
+				System.out.println(line);
+
+				if (line == null) {
+					break;
+				}
+			}
+
+		} catch (IllegalStateException e) {
+			System.err.println("Socket to server is closed :/ ");
+		}
+
+		System.out.println("DONE ... :)");
+
+		return "_NOTHING_";
 	}
 	@Override
 	public String logout() throws IOException {
@@ -99,8 +111,8 @@ public class Client implements IClientCli, Runnable {
 	@Override
 	@Command
 	public String exit() throws IOException {
-		shell.close();
 		controllerSocket.close();
+		shell.close();
 		return "See you later!";
 	}
 
@@ -117,7 +129,6 @@ public class Client implements IClientCli, Runnable {
 		Client client;
 		try {
 			client = new Client(args[0], new Config("client"), System.in, System.out);
-			client.run();
 		} catch (UnknownHostException e) {
 			System.err.println("Cloud-Controller host known");
 		} catch (IOException e) {
@@ -126,6 +137,7 @@ public class Client implements IClientCli, Runnable {
 		}
 
 	}
+
 	// --- Commands needed for Lab 2. Please note that you do not have to
 	// implement them for the first submission. ---
 	@Override
@@ -135,6 +147,7 @@ public class Client implements IClientCli, Runnable {
 	}
 
 	protected class CriticalException extends Exception {
+		private static final long serialVersionUID = 6958580904739111049L;
 	}
 
 }

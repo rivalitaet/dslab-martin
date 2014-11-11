@@ -1,38 +1,40 @@
 package controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
-public class ClientConnection implements Runnable, AutoCloseable {
+import shell.Command;
+import shell.Shell;
+import shell.SocketShell;
+
+public class ClientConnection implements Runnable {
 
 	private final Socket socket;
 	private final CloudController controller;
-	private final InputStream inputStream;
-	private final OutputStream outputStream;
+	private final Shell loginShell;
 
 	public ClientConnection(Socket socket, CloudController controller) throws IOException {
 		this.socket = socket;
 		this.controller = controller;
-		inputStream = new BufferedInputStream(socket.getInputStream());
-		outputStream = new BufferedOutputStream(socket.getOutputStream());
-	}
 
+		this.loginShell = new SocketShell("login shell", socket.getInputStream(), socket.getOutputStream());
+
+		loginShell.register(this);
+
+	}
 	@Override
 	public void run() {
-
+		loginShell.run();
 	}
 
-	@Override
 	public void close() throws Exception {
-		inputStream.close();
-		outputStream.close();
+		System.err.println("ClientConnection.close() was called");
+		socket.close();
 	}
 
-	public void login() {
-
+	@Command("@LOGIN")
+	public String login() {
+		System.err.println("I just logged in :)");
+		return "Hello World";
 	}
 }
