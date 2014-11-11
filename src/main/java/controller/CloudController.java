@@ -42,10 +42,6 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		this.udpPort = config.getInt("udp.port");
 
 		initUsers(userConfig);
-
-		for (User u : users.values()) {
-			System.out.println(u);
-		}
 	}
 
 	private void initUsers(Config userConfig) {
@@ -57,7 +53,9 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			if (parts.length == 2 && "password".equals(parts[1])) {
 				String username = parts[0];
 				String password = userConfig.getString(key);
-				User user = new User(username, password);
+				int credits = userConfig.getInt(username + ".credits");
+				User user = new User(username, password, credits);
+				user.setCredits(credits);
 				users.put(user.getHash(), user);
 			}
 		}

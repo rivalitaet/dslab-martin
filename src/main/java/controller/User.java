@@ -11,9 +11,10 @@ public class User {
 	private final String hash;
 	private int credits;
 
-	public User(String username, String password) {
+	public User(String username, String password, int credits) {
 		this.username = username;
 		this.hash = calcHash(username, password);
+		this.credits = credits;
 	}
 
 	public static String calcHash(String username, String password) {
