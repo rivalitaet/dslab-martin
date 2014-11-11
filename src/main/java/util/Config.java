@@ -39,6 +39,15 @@ public final class Config {
 		return this.bundle.getString(key);
 	}
 
+	public Set<String> getKeys() {
+		Set<String> keys = bundle.keySet();
+
+		for (String key : properties.keySet()) {
+			keys.add(key);
+		}
+
+		return keys;
+	}
 	/**
 	 * Returns the value as {@code int} for the given key.
 	 * 
