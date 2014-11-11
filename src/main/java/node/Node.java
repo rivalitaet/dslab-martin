@@ -1,17 +1,17 @@
 package node;
 
-import util.Config;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+
+import util.Config;
 
 public class Node implements INodeCli, Runnable {
 
 	private String componentName;
 	private Config config;
-	private InputStream userRequestStream;
-	private PrintStream userResponseStream;
+	private final InputStream userRequestStream;
+	private final PrintStream userResponseStream;
 
 	/**
 	 * @param componentName
@@ -23,8 +23,7 @@ public class Node implements INodeCli, Runnable {
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
 	 */
-	public Node(String componentName, Config config, InputStream userRequestStream,
-	                PrintStream userResponseStream) {
+	public Node(String componentName, Config config, InputStream userRequestStream, PrintStream userResponseStream) {
 		this.componentName = componentName;
 		this.config = config;
 		this.userRequestStream = userRequestStream;
@@ -56,7 +55,7 @@ public class Node implements INodeCli, Runnable {
 	 *            represents the name of the configuration
 	 */
 	public static void main(String[] args) {
-		Node node = new Node(args[0], new Config(args[0]), System.in, System.out);
+		// Node node = new Node(args[0], new Config(args[0]), System.in, System.out);
 		// TODO: start the node
 	}
 

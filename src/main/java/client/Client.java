@@ -15,9 +15,6 @@ import util.Config;
 
 public class Client implements IClientCli {
 
-	private final String componentName;
-	private final InputStream userRequestStream;
-	private final PrintStream userResponseStream;
 	private final Shell shell;
 	private final Socket controllerSocket;
 	private final Scanner controllerScanner;
@@ -37,10 +34,6 @@ public class Client implements IClientCli {
 	 */
 	public Client(String componentName, Config config, InputStream userRequestStream, PrintStream userResponseStream)
 	                throws UnknownHostException, IOException {
-		this.componentName = componentName;
-		this.userRequestStream = userRequestStream;
-		this.userResponseStream = userResponseStream;
-
 		String controllerHost = config.getString("controller.host");
 		int controllerPort = config.getInt("controller.tcp.port");
 		controllerSocket = new Socket(controllerHost, controllerPort);
@@ -126,9 +119,8 @@ public class Client implements IClientCli {
 			return;
 		}
 
-		Client client;
 		try {
-			client = new Client(args[0], new Config("client"), System.in, System.out);
+			new Client(args[0], new Config("client"), System.in, System.out);
 		} catch (UnknownHostException e) {
 			System.err.println("Cloud-Controller host known");
 		} catch (IOException e) {
