@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import shell.CliShell;
+import shell.Command;
 import shell.Shell;
 import util.Config;
 
@@ -95,6 +96,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			// who cares, if anything fails here, we can't do nothing anyways :)
 		}
 	}
+
 	@Override
 	public String nodes() throws IOException {
 		// TODO Auto-generated method stub
@@ -102,11 +104,21 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	}
 
 	@Override
+	@Command
 	public String users() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		String s = "";
 
+		int i = 0;
+		int len = users.size();
+
+		for (User user : users.values()) {
+			String end = i < len ? "\n" : "";
+			s += String.format("%2d. %s %s", i + 1, user.toString(), end);
+			i++;
+		}
+
+		return s;
+	}
 	@Override
 	public String exit() throws IOException {
 		shell.close();
