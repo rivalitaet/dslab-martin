@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Set;
 
 import shell.CliShell;
 import shell.Shell;
@@ -12,14 +14,14 @@ import util.Config;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
-	private final String componentName;
-	private final Config config;
 	private final InputStream userRequestStream;
 	private final PrintStream userResponseStream;
 	private final Shell shell;
 
 	private final int tcpPort;
 	private final int udpPort;
+
+	private final HashMap<String, User> users = new HashMap<>();
 
 	/**
 	 * @param componentName
@@ -31,20 +33,34 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
 	 */
-	public CloudController(String componentName, Config config, InputStream userRequestStream,
+	public CloudController(String componentName, Config config, Config userConfig, InputStream userRequestStream,
 	                PrintStream userResponseStream) {
-		this.componentName = componentName;
-		this.config = config;
 		this.userRequestStream = userRequestStream;
 		this.userResponseStream = userResponseStream;
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.tcpPort = config.getInt("tcp.port");
 		this.udpPort = config.getInt("udp.port");
+
+		initUsers(userConfig);
+
+		for (User u : users.values()) {
+			System.out.println(u);
+		}
 	}
 
-	private final void handleClient(Socket socket) throws IOException {
-		System.out.println("I will handle client");
-		socket.close();
+	private void initUsers(Config userConfig) {
+		Set<String> configKeys = userConfig.getKeys();
+
+		for (String key : configKeys) {
+			String[] parts = key.split("[.]");
+
+			if (parts.length == 2 && "password".equals(parts[1])) {
+				String username = parts[0];
+				String password = userConfig.getString(key);
+				User user = new User(username, password);
+				users.put(user.getHash(), user);
+			}
+		}
 	}
 
 	@Override
@@ -108,9 +124,12 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			System.out.println("usage: java CloudController <cloud-name>");
 			return;
 		}
-		CloudController cloudController = new CloudController(args[0], new Config("controller"), System.in, System.out);
-		Thread thread = new Thread(cloudController);
-		thread.start();
+
+		Config config = new Config("controller");
+		Config userConfig = new Config("user");
+
+		CloudController controller = new CloudController(args[0], config, userConfig, System.in, System.out);
+		new Thread(controller).start();
 	}
 
 }
