@@ -2,7 +2,9 @@
 
 <project name="dslab14" default="compile" basedir=".">
 	
-	<echo message="Ant running on Java version ${ant.java.version}"/>
+	<!-- 
+		<echo message="Ant running on Java version ${ant.java.version}"/>
+	-->
 
 	<property name="src.dir" value="src/main/java" />
 	<property name="src.resources.dir" value="src/main/resources" />
