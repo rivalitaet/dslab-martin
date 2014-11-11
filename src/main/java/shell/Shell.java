@@ -1,7 +1,6 @@
-package cli;
+package shell;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +13,6 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,19 +23,21 @@ import org.springframework.core.convert.support.DefaultConversionService;
  * Reads commands from an {@link InputStream}, executes them and writes the result to a
  * {@link OutputStream}.
  */
-public class Shell implements Runnable, Closeable {
+public abstract class Shell implements Runnable, Closeable {
 	private static final PrintStream stdout = System.out;
 	private static final InputStream stdin = System.in;
 	private static final char[] EMPTY = new char[0];
 
-	private static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
+	protected static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
 		@Override
 		protected DateFormat initialValue() {
 			return new SimpleDateFormat("HH:mm:ss.SSS");
 		}
 	};
 
-	private String name;
+	protected abstract String getCommandSign();
+
+	protected String name;
 
 	private ShellCommandInvocationHandler invocationHandler = new ShellCommandInvocationHandler();
 	private Map<String, ShellCommandDefinition> commandMap = new ConcurrentHashMap<>();
@@ -75,43 +75,16 @@ public class Shell implements Runnable, Closeable {
 	 * </ul>
 	 */
 	@Override
-	public void run() {
-		try {
-			for (String line; !Thread.currentThread().isInterrupted() && (line = readLine()) != null;) {
-				write(String.format("%s\t\t%s> %s%n", DATE_FORMAT.get().format(new Date()), name, line)
-				                .getBytes());
-				Object result;
-				try {
-					result = invoke(line);
-				} catch (IllegalArgumentException e) {
-					result = e.getMessage();
-					// e.printStackTrace();
-				} catch (Throwable throwable) {
-					ByteArrayOutputStream str = new ByteArrayOutputStream(1024);
-					throwable.printStackTrace(new PrintStream(str, true));
-					result = str.toString();
-				}
-				if (result != null) {
-					print(result);
-				}
-			}
-		} catch (IOException e) {
-			try {
-				writeLine("Shell closed");
-			} catch (IOException ex) {
-				System.out.println(ex.getClass().getName() + ": " + ex.getMessage());
-			}
-		}
-	}
+	public abstract void run();
 
-	private void print(Object result) throws IOException {
+	protected void print(Object result) throws IOException {
 		if (result instanceof Iterable) {
 			for (Object e : ((Iterable<?>) result)) {
 				print(e);
 			}
 		} else if (result instanceof Map) {
 			for (Map.Entry<?, ?> entry : ((Map<?, ?>) result).entrySet()) {
-				writeLine(entry.getKey() + "\t" + entry.getValue());
+				this.writeLine(entry.getKey() + "\t" + entry.getValue());
 			}
 		} else {
 			writeLine(String.valueOf(result));
@@ -126,18 +99,7 @@ public class Shell implements Runnable, Closeable {
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
-	public void writeLine(String line) throws IOException {
-		String now = DATE_FORMAT.get().format(new Date());
-		if (line.indexOf('\n') >= 0 && line.indexOf('\n') < line.length() - 1) {
-			write((String.format("%s\t\t%s:\n", now, name)).getBytes());
-			for (String l : line.split("[\\r\\n]+")) {
-				write((String.format("%s\t\t%s\n", now, l)).getBytes());
-			}
-		} else {
-			write((String.format("%s\t\t%s: %s%s", now, name, line, line.endsWith("\n") ? "" : "\n"))
-			                .getBytes());
-		}
-	}
+	public abstract void writeLine(String line) throws IOException;
 
 	/**
 	 * Writes {@code b.length} bytes from the specified byte array to the provided
@@ -212,6 +174,7 @@ public class Shell implements Runnable, Closeable {
 	@Override
 	public void close() {
 		Thread.currentThread().interrupt();
+
 		if (readMonitor != stdin) {
 			try {
 				readMonitor.close();
@@ -237,17 +200,16 @@ public class Shell implements Runnable, Closeable {
 	 * 
 	 * @param obj
 	 *            the object implementing commands to be registered
-	 * @see cli.Shell.ShellCommandDefinition
+	 * @see shell.Shell.ShellCommandDefinition
 	 */
 	public void register(Object obj) {
 		for (Method method : obj.getClass().getMethods()) {
 			Command command = method.getAnnotation(Command.class);
 			if (command != null) {
 				String name = command.value().isEmpty() ? method.getName() : command.value();
-				name = name.startsWith("!") ? name : "!" + name;
+				name = name.startsWith(getCommandSign()) ? name : getCommandSign() + name;
 				if (commandMap.containsKey(name)) {
-					throw new IllegalArgumentException(String.format("Command '%s' is already registered.",
-					                name));
+					throw new IllegalArgumentException(String.format("Command '%s' is already registered.", name));
 				}
 				method.setAccessible(true);
 				commandMap.put(name, new ShellCommandDefinition(obj, method));
