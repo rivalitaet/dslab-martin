@@ -86,7 +86,7 @@ public class Client implements IClientCli {
 				}
 
 			case "result" :
-				return String.format("Result for %s: %s", parts[1], parts[2]);
+				return String.format("Result for %s = %s", parts[1], parts[2]);
 
 			case "success" :
 				if (parts.length == 1) {
@@ -140,20 +140,13 @@ public class Client implements IClientCli {
 		}
 	}
 
-	private String receiveLines() {
+	private String receiveLine() {
 		try {
 			if (controllerScanner.hasNextLine()) {
 				String s = controllerScanner.nextLine();
-				s = parseResult(s);
-
-				while (controllerSocket.getInputStream().available() > 0) {
-					String anotherLine = parseResult(s);
-					s += "\n" + anotherLine;
-				}
-
-				return s;
+				return parseResult(s);
 			}
-		} catch (IllegalStateException | IOException e) {
+		} catch (IllegalStateException e) {
 			System.err.println("The server has closed the connection");
 			exit();
 		}
@@ -170,42 +163,42 @@ public class Client implements IClientCli {
 	public String login(final String username, final String password) throws IOException {
 		String msg = String.format("@LOGIN %s %s", username, password);
 		sendLine(msg);
-		return receiveLines();
+		return receiveLine();
 	}
 
 	@Command
 	@Override
 	public String logout() throws IOException {
 		sendLine("@LOGOUT");
-		return receiveLines();
+		return receiveLine();
 	}
 
 	@Command
 	@Override
 	public String credits() throws IOException {
 		sendLine("@CREDITS");
-		return receiveLines();
+		return receiveLine();
 	}
 
 	@Command
 	@Override
 	public String buy(long credits) throws IOException {
 		sendLine("@BUY " + credits);
-		return receiveLines();
+		return receiveLine();
 	}
 
 	@Command
 	@Override
 	public String list() throws IOException {
 		sendLine("@LIST");
-		return receiveLines();
+		return receiveLine();
 	}
 
 	@Command
 	@Override
 	public String compute(String calculation) throws IOException {
 		sendLine(String.format("@COMPUTE %s", calculation));
-		return receiveLines();
+		return receiveLine();
 	}
 
 	@Override
