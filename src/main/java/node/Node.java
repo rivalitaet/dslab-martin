@@ -55,17 +55,8 @@ public class Node implements INodeCli, Runnable {
 	 *            represents the name of the configuration
 	 */
 	public static void main(String[] args) {
-		// Node node = new Node(args[0], new Config(args[0]), System.in, System.out);
+		Node node = new Node(args[0], new Config(args[0]), System.in, System.out);
 		// TODO: start the node
-	}
-
-	// --- Commands needed for Lab 2. Please note that you do not have to
-	// implement them for the first submission. ---
-
-	@Override
-	public String resources() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
