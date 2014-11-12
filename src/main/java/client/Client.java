@@ -6,8 +6,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 import shell.CliShell;
@@ -48,42 +46,95 @@ public class Client implements IClientCli {
 		shell.run();
 	}
 
-	private List<String> parseResult(String result) {
+	private String parseError(String type) {
+		switch (type) {
+			case "login_first" :
+				return "Please login first!";
+
+			default :
+				return String.format("Error (%s)", type);
+		}
+	}
+
+	private String parseError(String type, String msg) {
+		switch (type) {
+			case "exception" :
+				if (msg.equals("wrong_credentials")) {
+					return "Your username or password is wrong.";
+				}
+				return "Error: " + msg;
+
+			case "calculation_error" :
+				return "Error in Calculation: " + msg;
+
+			default :
+				return String.format("Strange error (%s): %s", type, msg);
+		}
+	}
+
+	private String parseResult(String result) {
 		String[] parts = result.split("[:]");
-		List<String> parsed = new LinkedList<>();
 
-		if (parts.length == 3 && parts[0].equals("result")) {
-			parsed.add(String.format("Result for %s: %s", parts[1], parts[2]));
-			return parsed;
+		switch (parts[0]) {
+			case "error" :
+				if (parts.length == 1) {
+					return "Internal error. ";
+				} else if (parts.length == 2) {
+					return parseError(parts[1]);
+				} else {
+					return parseError(parts[1], parts[2]);
+				}
+
+			case "result" :
+				return String.format("Result for %s: %s", parts[1], parts[2]);
+
+			case "success" :
+				if (parts.length == 1) {
+					return "Success.";
+				} else if (parts.length == 2) {
+					return parseSuccess(parts[1]);
+				} else {
+					return parseSuccess(parts[1], parts[2]);
+				}
+
+			case "credits" :
+				return String.format("You have %s credits left", parts[2]);
+
+			default :
+				return "Strange state: " + result;
 		}
 
-		for (int i = 0; i < parts.length; i++) {
-			String prev = i > 0 ? parts[i - 1] : "";
-			String current = parts[i];
+	}
 
-			if (current == "error") {
-				// nothing
-			} else if (prev.equals("error") && current.equals("illegal_command")) {
-				parsed.add("Internal error, this command does not exist on the server: ");
-			} else if (prev.equals("error") && current.equals("exception")) {
-				parsed.add("An error occured on the server:");
-			} else if (prev.equals("error")) {
-				parsed.add("An undefined error occured on the server");
-			} else {
-				parsed.add("  " + current);
-			}
+	private String parseSuccess(String type, String msg) {
+		switch (type) {
+			case "login_worked" :
+				return String.format("Willkommen %s!", msg);
+
+			default :
+				return "Success: " + msg;
 		}
+	}
 
-		return null;
+	private String parseSuccess(String type) {
+		switch (type) {
+			case "logged_out" :
+				return "Auf Wiedersehen!";
+
+			default :
+				return "Strange State: " + type;
+		}
 	}
 
 	private String receiveLines() {
 		try {
 			if (controllerScanner.hasNextLine()) {
 				String s = controllerScanner.nextLine();
+				s = parseResult(s);
 
 				while (controllerSocket.getInputStream().available() > 0) {
-					s += "\n" + controllerScanner.nextLine();
+					String anotherLine = parseResult(s);
+					s += "\n" + anotherLine;
 				}
 
 				return s;
@@ -111,14 +162,15 @@ public class Client implements IClientCli {
 	@Command
 	@Override
 	public String logout() throws IOException {
-
-		return null;
+		sendLine("@LOGOUT");
+		return receiveLines();
 	}
 
+	@Command
 	@Override
 	public String credits() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		sendLine("@CREDITS");
+		return receiveLines();
 	}
 
 	@Override
