@@ -211,11 +211,26 @@ public class Client implements IClientCli {
 	@Override
 	@Command
 	public String exit() {
-		System.out.println("Shutting down");
+		try {
+			shell.writeLine("Shutting down");
+		} catch (IOException e1) {
+			// we don't care here anymore
+			e1.printStackTrace();
+		}
+
+		if (!controllerSocket.isOutputShutdown()) {
+			try {
+				logout();
+			} catch (IOException e) {
+				// we don't care here anymore
+				e.printStackTrace();
+			}
+		}
+
 		try {
 			controllerSocket.close();
 		} catch (IOException e) {
-			// we can't do anything here
+			// we don't care here anymore
 			e.printStackTrace();
 		}
 		shell.close();
