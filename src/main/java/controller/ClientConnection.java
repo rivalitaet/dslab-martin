@@ -52,10 +52,35 @@ public class ClientConnection implements Runnable {
 		return "Successfully logged in.";
 	}
 
-	@Command("@LOGOUT")
+	@Command("CREDITS")
+	public String credits() {
+		if (!isLoggedIn()) {
+			return "error:login_first";
+		}
+
+		return "credits:" + getUser().getCredits();
+	}
+
+	@Command("LIST")
+	public String listCommands() {
+		if (!isLoggedIn()) {
+			return "error:login_first";
+		}
+
+		return "list:+-*/";
+	}
+
+	@Command("COMPUTE")
+	public String compute(String stuff) {
+		String[] parts = stuff.split("\\s+");
+
+		return null;
+	}
+
+	@Command("LOGOUT")
 	public String logout() {
 		if (!isLoggedIn()) {
-			return "Please login first!";
+			return "error:login_first";
 		}
 
 		getUser().logout();
@@ -70,4 +95,5 @@ public class ClientConnection implements Runnable {
 
 		return null;
 	}
+
 }
