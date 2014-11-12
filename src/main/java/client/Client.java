@@ -98,7 +98,11 @@ public class Client implements IClientCli {
 				}
 
 			case "credits" :
-				return String.format("You have %s credits left", parts[2]);
+				if (parts.length == 1) {
+					return "Credits: invalid state";
+				} else {
+					return String.format("You have %s credits left", parts[1]);
+				}
 
 			default :
 				return "Strange state: " + result;

@@ -13,26 +13,36 @@ public class ClientConnection implements Runnable {
 
 	private final Socket socket;
 	private final CloudController controller;
-	private final Shell loginShell;
+	private final Shell shell;
 
 	private User user = null;
 
 	public ClientConnection(Socket socket, CloudController controller) throws IOException {
 		this.socket = socket;
 		this.controller = controller;
-		this.loginShell = new SocketShell("login shell", socket.getInputStream(), socket.getOutputStream());
-		loginShell.register(this);
+		this.shell = new SocketShell("login shell", socket.getInputStream(), socket.getOutputStream());
+		shell.register(this);
 	}
 
 	@Override
 	public void run() {
-		loginShell.run();
+		shell.run();
+		close();
 	}
 
-	public void close() throws Exception {
-		System.err.println("ClientConnection.close() was called");
-		socket.close();
-		loginShell.close();
+	public void close() {
+		System.out.println("Connection was closed");
+
+		logout();
+
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// We can't do much about it
+			e.printStackTrace();
+		}
+
+		shell.close();
 	}
 
 	public User getUser() {
@@ -103,7 +113,7 @@ public class ClientConnection implements Runnable {
 		user = null;
 
 		try {
-			loginShell.writeLine("success:logged_out");
+			shell.writeLine("success:logged_out");
 		} catch (IOException e) {
 			// We don't need to handle these errors, because the client is logged out anyways
 			e.printStackTrace();
