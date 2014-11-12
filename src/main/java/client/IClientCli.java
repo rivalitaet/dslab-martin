@@ -121,26 +121,4 @@ public interface IClientCli {
 	 */
 	String exit() throws IOException;
 
-	// --- Commands needed for Lab 2. Please note that you do not have to
-	// implement them for the first submission. ---
-
-	/**
-	 * Authenticates the client with the provided username and key.
-	 * <p/>
-	 * <b>Request</b>:<br/>
-	 * {@code !login &lt;username&gt; &lt;client-challenge&gt;}<br/>
-	 * <b>Response:</b><br/>
-	 * {@code !ok &lt;client-challenge&gt; &lt;controller-challenge&gt; &lt; secret-key&gt; &lt;iv-parameter&gt;}
-	 * <br/>
-	 * <b>Request</b>:<br/>
-	 * {@code &lt;controller-challenge&gt;}
-	 * 
-	 * @param username
-	 *            the name of the user
-	 * @return status whether the authentication was successful or not
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 */
-	String authenticate(String username) throws IOException;
-
 }

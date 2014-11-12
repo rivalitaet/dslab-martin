@@ -24,11 +24,13 @@ import org.springframework.core.convert.support.DefaultConversionService;
  * {@link OutputStream}.
  */
 public abstract class Shell implements Runnable, Closeable {
+
 	private static final PrintStream stdout = System.out;
 	private static final InputStream stdin = System.in;
 	private static final char[] EMPTY = new char[0];
 
 	protected static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
+
 		@Override
 		protected DateFormat initialValue() {
 			return new SimpleDateFormat("HH:mm:ss.SSS");
@@ -275,6 +277,7 @@ public abstract class Shell implements Runnable, Closeable {
 	 * Defines a {@link Method} to be invoked on a certain object.
 	 */
 	static class ShellCommandDefinition {
+
 		protected Object targetObject;
 		protected Method targetMethod;
 

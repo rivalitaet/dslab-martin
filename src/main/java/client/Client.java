@@ -104,6 +104,13 @@ public class Client implements IClientCli {
 					return String.format("You have %s credits left", parts[1]);
 				}
 
+			case "list" :
+				if (parts.length == 1) {
+					return "List: received illegal state from server";
+				} else {
+					return String.format("Allowed operations are %s", parts[1]);
+				}
+
 			default :
 				return "Strange state: " + result;
 		}
@@ -187,16 +194,18 @@ public class Client implements IClientCli {
 		return receiveLines();
 	}
 
+	@Command
 	@Override
 	public String list() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		sendLine("@LIST");
+		return receiveLines();
 	}
 
+	@Command
 	@Override
-	public String compute(String term) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public String compute(String calculation) throws IOException {
+		sendLine(String.format("@COMPUTE %s", calculation));
+		return receiveLines();
 	}
 
 	@Override
@@ -231,20 +240,6 @@ public class Client implements IClientCli {
 			System.err.println("Not possible to connect the client");
 			e.printStackTrace();
 		}
-
-	}
-
-	// --- Commands needed for Lab 2. Please note that you do not have to
-	// implement them for the first submission. ---
-	@Override
-	public String authenticate(String username) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	protected class CriticalException extends Exception {
-
-		private static final long serialVersionUID = 6958580904739111049L;
 	}
 
 }
