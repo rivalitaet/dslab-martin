@@ -46,24 +46,28 @@ public class Client implements IClientCli {
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.shell.register(this);
 		shell.run();
-
 	}
 
 	private List<String> parseResult(String result) {
 		String[] parts = result.split("[:]");
 		List<String> parsed = new LinkedList<>();
 
+		if (parts.length == 3 && parts[0].equals("result")) {
+			parsed.add(String.format("Result for %s: %s", parts[1], parts[2]));
+			return parsed;
+		}
+
 		for (int i = 0; i < parts.length; i++) {
-			String prev = i > 0 ? parts[i - 1] : null;
+			String prev = i > 0 ? parts[i - 1] : "";
 			String current = parts[i];
 
 			if (current == "error") {
 				// nothing
-			} else if (prev == "error" && current == "illegal_command") {
+			} else if (prev.equals("error") && current.equals("illegal_command")) {
 				parsed.add("Internal error, this command does not exist on the server: ");
-			} else if (prev == "error" && current == "exception") {
+			} else if (prev.equals("error") && current.equals("exception")) {
 				parsed.add("An error occured on the server:");
-			} else if (prev == "error") {
+			} else if (prev.equals("error")) {
 				parsed.add("An undefined error occured on the server");
 			} else {
 				parsed.add("  " + current);
@@ -72,34 +76,42 @@ public class Client implements IClientCli {
 
 		return null;
 	}
+
+	private String receiveLines() {
+		try {
+			if (controllerScanner.hasNextLine()) {
+				String s = controllerScanner.nextLine();
+
+				while (controllerSocket.getInputStream().available() > 0) {
+					s += "\n" + controllerScanner.nextLine();
+				}
+
+				return s;
+			}
+		} catch (IllegalStateException | IOException e) {
+			System.err.println("The server has closed the connection");
+			exit();
+		}
+
+		return null;
+	}
+
+	private void sendLine(String msg) {
+		controllerWriter.println(msg);
+	}
+
 	@Override
 	@Command
 	public String login(final String username, final String password) throws IOException {
 		String msg = String.format("@LOGIN %s %s", username, password);
-
-		controllerWriter.println(msg);
-
-		try {
-			while (controllerScanner.hasNextLine()) {
-				String line = controllerScanner.nextLine();
-				System.out.println(line);
-
-				if (line == null) {
-					break;
-				}
-			}
-
-		} catch (IllegalStateException e) {
-			System.err.println("Socket to server is closed :/ ");
-		}
-
-		System.out.println("DONE ... :)");
-
-		return "_NOTHING_";
+		sendLine(msg);
+		return receiveLines();
 	}
+
+	@Command
 	@Override
 	public String logout() throws IOException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -129,8 +141,14 @@ public class Client implements IClientCli {
 
 	@Override
 	@Command
-	public String exit() throws IOException {
-		controllerSocket.close();
+	public String exit() {
+		System.out.println("Shutting down");
+		try {
+			controllerSocket.close();
+		} catch (IOException e) {
+			// we can't do anything here
+			e.printStackTrace();
+		}
 		shell.close();
 		return "See you later!";
 	}
@@ -165,6 +183,7 @@ public class Client implements IClientCli {
 	}
 
 	protected class CriticalException extends Exception {
+
 		private static final long serialVersionUID = 6958580904739111049L;
 	}
 
