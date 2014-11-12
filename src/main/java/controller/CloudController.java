@@ -15,6 +15,8 @@ import shell.Command;
 import shell.Shell;
 import util.Config;
 import util.StringUtils;
+import controller.computation.Calculator;
+import controller.computation.SimpleCalculator;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
@@ -27,6 +29,8 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 	private final HashMap<String, User> users = new HashMap<>();
 	private final HashMap<User, ClientConnection> logins = new HashMap<>();
+
+	private final Calculator calc = new SimpleCalculator();
 
 	/**
 	 * @param componentName
@@ -49,6 +53,10 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		initUsers(userConfig);
 	}
 
+	public Calculator getCalc() {
+		return calc;
+	}
+
 	private void initUsers(Config userConfig) {
 		Set<String> configKeys = userConfig.getKeys();
 
@@ -60,7 +68,6 @@ public class CloudController implements ICloudControllerCli, Runnable {
 				String password = userConfig.getString(key);
 				int credits = userConfig.getInt(username + ".credits");
 				User user = new User(username, password, credits);
-				user.setCredits(credits);
 				users.put(user.getHash(), user);
 			}
 		}

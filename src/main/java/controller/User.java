@@ -9,27 +9,27 @@ public class User {
 
 	private final String username;
 	private final String hash;
-	private int credits;
 
+	private int credits;
 	private ClientConnection connection = null;
 
-	public ClientConnection getConnection() {
+	public synchronized ClientConnection getConnection() {
 		return connection;
 	}
 
-	public boolean isLoggedIn() {
-		return getConnection() != null;
+	public synchronized boolean isLoggedIn() {
+		return connection != null;
 	}
 
-	public void login(ClientConnection connection) throws CommandException {
-		if (isLoggedIn()) {
+	public synchronized void login(ClientConnection connection) throws CommandException {
+		if (connection != null) {
 			throw new CommandException("You are already logged in");
 		}
 
 		this.connection = connection;
 	}
 
-	public void logout() {
+	public synchronized void logout() {
 		this.connection = null;
 	}
 
@@ -39,7 +39,31 @@ public class User {
 		this.credits = credits;
 	}
 
-	public static String calcHash(String username, String password) {
+	public String getUsername() {
+		return username;
+	}
+
+	public String getHash() {
+		return hash;
+	}
+
+	public int getCredits() {
+		synchronized (this) {
+			return credits;
+		}
+	}
+
+	@Override
+	public synchronized String toString() {
+		String onoff = isLoggedIn() ? "online" : "offline";
+		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
+	}
+
+	public synchronized void charge(int price) {
+		credits -= price;
+	}
+
+	public final static String calcHash(String username, String password) {
 		try {
 			String key = username + password;
 
@@ -62,25 +86,4 @@ public class User {
 		return null;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public String getHash() {
-		return hash;
-	}
-
-	public int getCredits() {
-		return credits;
-	}
-
-	public void setCredits(int credits) {
-		this.credits = credits;
-	}
-
-	@Override
-	public String toString() {
-		String onoff = isLoggedIn() ? "online" : "offline";
-		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
-	}
 }
