@@ -43,10 +43,8 @@ public class User {
 		return hash;
 	}
 
-	public int getCredits() {
-		synchronized (this) {
-			return credits;
-		}
+	public synchronized int getCredits() {
+		return credits;
 	}
 
 	@Override

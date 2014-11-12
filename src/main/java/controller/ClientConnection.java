@@ -10,6 +10,7 @@ import controller.computation.CalculationException;
 import controller.computation.Computation;
 
 public class ClientConnection implements Runnable {
+
 	private final Socket socket;
 	private final CloudController controller;
 	private final Shell loginShell;
@@ -46,9 +47,9 @@ public class ClientConnection implements Runnable {
 	public String login(String username, String password) {
 		try {
 			user = controller.login(username, password, this);
-			return "Successfully logged in as " + user.getUsername() + ".";
+			return "success:login_worked:" + user.getUsername();
 		} catch (CommandException e) {
-			return "error:" + e.getMessage() + ".";
+			return "error:exception:" + e.getMessage();
 		}
 	}
 
@@ -91,6 +92,7 @@ public class ClientConnection implements Runnable {
 			return "error:calculation_error:" + e.getMessage();
 		}
 	}
+
 	@Command("LOGOUT")
 	public String logout() {
 		if (!isLoggedIn()) {
@@ -101,7 +103,7 @@ public class ClientConnection implements Runnable {
 		user = null;
 
 		try {
-			loginShell.writeLine("Auf Wiedersehen!");
+			loginShell.writeLine("success:logged_out");
 		} catch (IOException e) {
 			// We don't need to handle these errors, because the client is logged out anyways
 			e.printStackTrace();

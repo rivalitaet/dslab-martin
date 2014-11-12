@@ -83,7 +83,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 		synchronized (users) {
 			if (!users.containsKey(hash)) {
-				throw new CommandException("Wrong username or password");
+				throw new CommandException("wrong_credentials");
 			}
 
 			User user = users.get(hash);
@@ -148,6 +148,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 		return StringUtils.join("\n", parts);
 	}
+
 	@Override
 	public String exit() throws IOException {
 		shell.close();
