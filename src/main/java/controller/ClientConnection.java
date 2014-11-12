@@ -3,11 +3,11 @@ package controller;
 import java.io.IOException;
 import java.net.Socket;
 
+import model.computation.CalculationException;
+import model.computation.Computation;
 import shell.Command;
 import shell.Shell;
 import shell.SocketShell;
-import controller.computation.CalculationException;
-import controller.computation.Computation;
 
 public class ClientConnection implements Runnable {
 

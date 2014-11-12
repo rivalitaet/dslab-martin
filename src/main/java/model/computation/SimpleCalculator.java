@@ -1,4 +1,4 @@
-package controller.computation;
+package model.computation;
 
 public class SimpleCalculator implements Calculator {
 

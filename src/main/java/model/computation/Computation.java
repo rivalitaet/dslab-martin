@@ -1,4 +1,4 @@
-package controller.computation;
+package model.computation;
 
 import java.util.Scanner;
 
@@ -8,7 +8,9 @@ public abstract class Computation {
 
 	public abstract int getPrice();
 
-	public static Computation getComputation(String calculation, Calculator calc) throws CalculationException {
+	public static Computation getComputation(String calculation, Calculator calc, String operators)
+	                throws CalculationException {
+
 		String[] parts = calculation.split("\\s");
 
 		try {
@@ -28,6 +30,13 @@ public abstract class Computation {
 				if (i % 2 == 0) {
 					Number current = new Number(Integer.parseInt(parts[i]));
 					String op = parts[i - 1];
+
+					if (!operators.contains(op)) {
+						throw new CalculationException(String.format(
+						                "Operator '%s' is not allowed in this calculator. You may use '%s'", op,
+						                operators));
+					}
+
 					lastComputation = new Operation(lastComputation, current, op, calc);
 				}
 			}
@@ -36,6 +45,11 @@ public abstract class Computation {
 		} catch (NumberFormatException e) {
 			throw new CalculationException("Not a valid number: " + e.getMessage());
 		}
+
+	}
+
+	public static Computation getComputation(String calculation, Calculator calc) throws CalculationException {
+		return getComputation(calculation, calc, "+-*/");
 	}
 
 	public static void main(String[] args) {

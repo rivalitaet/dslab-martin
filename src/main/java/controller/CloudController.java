@@ -10,13 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import model.computation.Calculator;
+import model.computation.SimpleCalculator;
 import shell.CliShell;
 import shell.Command;
 import shell.Shell;
 import util.Config;
 import util.StringUtils;
-import controller.computation.Calculator;
-import controller.computation.SimpleCalculator;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
@@ -124,6 +124,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		try {
 			exit();
 		} catch (IOException e) {
+			e.printStackTrace();
 			// who cares, if anything fails here, we can't do nothing anyways :)
 		}
 	}

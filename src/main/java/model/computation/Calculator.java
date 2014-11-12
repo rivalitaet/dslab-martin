@@ -1,4 +1,4 @@
-package controller.computation;
+package model.computation;
 
 public interface Calculator {
 	public abstract int add(int a, int b);
