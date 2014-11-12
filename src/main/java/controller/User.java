@@ -11,6 +11,28 @@ public class User {
 	private final String hash;
 	private int credits;
 
+	private ClientConnection connection = null;
+
+	public ClientConnection getConnection() {
+		return connection;
+	}
+
+	public boolean isLoggedIn() {
+		return getConnection() != null;
+	}
+
+	public void login(ClientConnection connection) throws CommandException {
+		if (isLoggedIn()) {
+			throw new CommandException("You are already logged in");
+		}
+
+		this.connection = connection;
+	}
+
+	public void logout() {
+		this.connection = null;
+	}
+
 	public User(String username, String password, int credits) {
 		this.username = username;
 		this.hash = calcHash(username, password);
@@ -56,7 +78,9 @@ public class User {
 		this.credits = credits;
 	}
 
+	@Override
 	public String toString() {
-		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), "on/off?", getCredits(), getHash());
+		String onoff = isLoggedIn() ? "online" : "offline";
+		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
 	}
 }

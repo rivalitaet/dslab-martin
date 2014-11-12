@@ -26,7 +26,6 @@ public class SocketShell extends Shell {
 				try {
 					result = invoke(line.trim());
 				} catch (IllegalArgumentException e) {
-					System.err.println("#" + line.trim() + "#");
 					result = "error:illegal_command:" + e.getMessage();
 					// e.printStackTrace();
 				} catch (Throwable throwable) {

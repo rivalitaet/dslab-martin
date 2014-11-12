@@ -6,12 +6,15 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import shell.CliShell;
 import shell.Command;
 import shell.Shell;
 import util.Config;
+import util.StringUtils;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
@@ -23,6 +26,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	private final int udpPort;
 
 	private final HashMap<String, User> users = new HashMap<>();
+	private final HashMap<User, ClientConnection> logins = new HashMap<>();
 
 	/**
 	 * @param componentName
@@ -59,6 +63,26 @@ public class CloudController implements ICloudControllerCli, Runnable {
 				user.setCredits(credits);
 				users.put(user.getHash(), user);
 			}
+		}
+	}
+
+	/**
+	 * Logs in a user by her credentials.
+	 * 
+	 * @return the matching user, or {@code null} if none matches
+	 */
+	public User login(String username, String password, ClientConnection connection) throws CommandException {
+		String hash = User.calcHash(username, password);
+
+		synchronized (users) {
+			if (!users.containsKey(hash)) {
+				throw new CommandException("Wrong username or password");
+			}
+
+			User user = users.get(hash);
+			user.login(connection);
+
+			return user;
 		}
 	}
 
@@ -106,18 +130,16 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	@Override
 	@Command
 	public String users() throws IOException {
-		String s = "";
+		List<String> parts = new LinkedList<>();
 
-		int i = 0;
-		int len = users.size();
-
+		int i = 1;
 		for (User user : users.values()) {
-			String end = i < len ? "\n" : "";
-			s += String.format("%2d. %s %s", i + 1, user.toString(), end);
+			String s = String.format("%2d. %s", i, user.toString());
+			parts.add(s);
 			i++;
 		}
 
-		return s;
+		return StringUtils.join("\n", parts);
 	}
 	@Override
 	public String exit() throws IOException {

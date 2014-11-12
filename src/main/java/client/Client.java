@@ -6,6 +6,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 import shell.CliShell;
@@ -46,10 +48,34 @@ public class Client implements IClientCli {
 		shell.run();
 
 	}
+
+	private List<String> parseResult(String result) {
+		String[] parts = result.split("[:]");
+		List<String> parsed = new LinkedList<>();
+
+		for (int i = 0; i < parts.length; i++) {
+			String prev = i > 0 ? parts[i - 1] : null;
+			String current = parts[i];
+
+			if (current == "error") {
+				// nothing
+			} else if (prev == "error" && current == "illegal_command") {
+				parsed.add("Internal error, this command does not exist on the server: ");
+			} else if (prev == "error" && current == "exception") {
+				parsed.add("An error occured on the server:");
+			} else if (prev == "error") {
+				parsed.add("An undefined error occured on the server");
+			} else {
+				parsed.add("  " + current);
+			}
+		}
+
+		return null;
+	}
 	@Override
 	@Command
 	public String login(final String username, final String password) throws IOException {
-		String msg = String.format("!LOGIN %s %s", username, password);
+		String msg = String.format("@LOGIN %s %s", username, password);
 
 		controllerWriter.println(msg);
 
