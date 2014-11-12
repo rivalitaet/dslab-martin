@@ -6,9 +6,10 @@ import java.net.Socket;
 import shell.Command;
 import shell.Shell;
 import shell.SocketShell;
+import controller.computation.CalculationException;
+import controller.computation.Computation;
 
 public class ClientConnection implements Runnable {
-
 	private final Socket socket;
 	private final CloudController controller;
 	private final Shell loginShell;
@@ -41,15 +42,14 @@ public class ClientConnection implements Runnable {
 		return getUser() != null && getUser().isLoggedIn();
 	}
 
-	@Command("@LOGIN")
+	@Command("LOGIN")
 	public String login(String username, String password) {
 		try {
 			user = controller.login(username, password, this);
+			return "Successfully logged in as " + user.getUsername() + ".";
 		} catch (CommandException e) {
 			return "error:" + e.getMessage() + ".";
 		}
-
-		return "Successfully logged in.";
 	}
 
 	@Command("CREDITS")
@@ -71,12 +71,26 @@ public class ClientConnection implements Runnable {
 	}
 
 	@Command("COMPUTE")
-	public String compute(String stuff) {
-		String[] parts = stuff.split("\\s+");
+	public String compute(String calculation) {
+		if (!isLoggedIn()) {
+			return "error:login_first";
+		}
 
-		return null;
+		try {
+			Computation computation = Computation.getComputation(calculation, controller.getCalc());
+
+			int price = computation.getPrice();
+			user.charge(price);
+
+			int result = computation.getResult();
+			return "result:" + computation.toString() + ":" + result;
+
+		} catch (CommandException e) {
+			return "error:" + e.getMessage();
+		} catch (CalculationException e) {
+			return "error:calculation_error:" + e.getMessage();
+		}
 	}
-
 	@Command("LOGOUT")
 	public String logout() {
 		if (!isLoggedIn()) {

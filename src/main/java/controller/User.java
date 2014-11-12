@@ -13,20 +13,16 @@ public class User {
 	private int credits;
 	private ClientConnection connection = null;
 
-	public synchronized ClientConnection getConnection() {
-		return connection;
-	}
-
 	public synchronized boolean isLoggedIn() {
-		return connection != null;
+		return this.connection != null;
 	}
 
-	public synchronized void login(ClientConnection connection) throws CommandException {
-		if (connection != null) {
+	public synchronized void login(ClientConnection newConnection) throws CommandException {
+		if (this.connection != null) {
 			throw new CommandException("You are already logged in");
 		}
 
-		this.connection = connection;
+		this.connection = newConnection;
 	}
 
 	public synchronized void logout() {
@@ -59,7 +55,11 @@ public class User {
 		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
 	}
 
-	public synchronized void charge(int price) {
+	public synchronized void charge(int price) throws CommandException {
+		if (credits < price) {
+			throw new CommandException("Not enough money");
+		}
+
 		credits -= price;
 	}
 
