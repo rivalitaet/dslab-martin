@@ -10,11 +10,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import shell.CliShell;
+import shell.Command;
+import shell.Shell;
 import util.Config;
 
 public class Node implements INodeCli, Runnable {
 
-	private final String componentName;
+	private final Shell shell;
 	private final InputStream userRequestStream;
 	private final PrintStream userResponseStream;
 
@@ -27,6 +30,8 @@ public class Node implements INodeCli, Runnable {
 	private final ExecutorService pool = Executors.newCachedThreadPool();
 	private final String operators;
 
+	ServerSocket serverSocket = null;
+
 	/**
 	 * @param componentName
 	 *            the name of the component - represented in the prompt
@@ -38,13 +43,16 @@ public class Node implements INodeCli, Runnable {
 	 *            the output stream to write the console output to
 	 */
 	public Node(String componentName, Config config, InputStream userRequestStream, PrintStream userResponseStream) {
-		this.componentName = componentName;
 		this.userRequestStream = userRequestStream;
 		this.userResponseStream = userResponseStream;
 
 		intervall = config.getInt("node.alive");
 		tcpPort = config.getInt("tcp.port");
 		operators = config.getString("node.operators");
+
+		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
+		this.shell.register(this);
+		new Thread(this.shell).start();
 
 		isAlivePool.scheduleAtFixedRate(new Runnable() {
 
@@ -57,7 +65,10 @@ public class Node implements INodeCli, Runnable {
 
 	@Override
 	public void run() {
+		isRunning = true;
+
 		try (ServerSocket serverSocket = new ServerSocket(tcpPort)) {
+			this.serverSocket = serverSocket;
 
 			while (true) {
 				try {
@@ -66,9 +77,12 @@ public class Node implements INodeCli, Runnable {
 					pool.execute(calc);
 
 				} catch (IOException e) {
-					userResponseStream.println("A socket caught an exception");
+					if (isRunning) {
+						userResponseStream.println("IO Error with ServerSocket :/ ");
+					} else {
+						return;
+					}
 				} catch (Exception e) {
-					// TODO really handle closing problems
 					userResponseStream.println("AutoClose failed!");
 					e.printStackTrace();
 				}
@@ -92,8 +106,16 @@ public class Node implements INodeCli, Runnable {
 		// System.err.println("Send alive");
 	}
 
+	@Command
 	@Override
 	public String exit() throws IOException {
+		isRunning = false;
+
+		isAlivePool.shutdown();
+		pool.shutdown();
+		serverSocket.close();
+		shell.close();
+
 		return "Tschau mit au!";
 	}
 
