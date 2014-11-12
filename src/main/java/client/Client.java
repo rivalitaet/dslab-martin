@@ -51,6 +51,9 @@ public class Client implements IClientCli {
 			case "login_first" :
 				return "Please login first!";
 
+			case "negative_add" :
+				return "That's less than zero. You're kidding me :)";
+
 			default :
 				return String.format("Error (%s)", type);
 		}

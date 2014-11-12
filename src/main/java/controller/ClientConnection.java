@@ -81,8 +81,7 @@ public class ClientConnection implements Runnable {
 		try {
 			user.addCredits(newCredits);
 		} catch (CommandException e) {
-			// This method is actually save, so this should never ever happen!
-			e.printStackTrace();
+			return "error:negative_add";
 		}
 
 		return "success:credits:" + user.getCredits();
