@@ -10,7 +10,7 @@ public class User {
 	private final String username;
 	private final String hash;
 
-	private int credits;
+	private long credits;
 	private ClientConnection connection = null;
 
 	public synchronized boolean isLoggedIn() {
@@ -43,7 +43,7 @@ public class User {
 		return hash;
 	}
 
-	public synchronized int getCredits() {
+	public synchronized long getCredits() {
 		return credits;
 	}
 
@@ -53,12 +53,28 @@ public class User {
 		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
 	}
 
-	public synchronized void charge(int price) throws CommandException {
-		if (credits < price) {
+	private synchronized void changeCredits(long delta) throws CommandException {
+		if (delta < 0 && credits + delta < 0) {
 			throw new CommandException("Not enough money");
 		}
 
-		credits -= price;
+		credits += delta;
+	}
+
+	public void addCredits(long newCredits) throws CommandException {
+		if (newCredits < 0) {
+			throw new CommandException("New credits < 0");
+		}
+
+		changeCredits(newCredits);
+	}
+
+	public void charge(long price) throws CommandException {
+		if (price < 0) {
+			throw new CommandException("User.charged(< 0)! This should not happend");
+		}
+
+		changeCredits(-price);
 	}
 
 	public final static String calcHash(String username, String password) {

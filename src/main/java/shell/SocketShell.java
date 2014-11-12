@@ -23,15 +23,12 @@ public class SocketShell extends Shell {
 			for (String line; !Thread.currentThread().isInterrupted() && (line = readLine()) != null;) {
 				Object result;
 
-				System.out.println("line: " + line);
-
 				try {
 					result = invoke(line.trim());
 				} catch (IllegalArgumentException e) {
 					result = "error:illegal_command:" + e.getMessage();
 					// e.printStackTrace();
 				} catch (Throwable throwable) {
-					System.err.println("Another Shell problem");
 					ByteArrayOutputStream str = new ByteArrayOutputStream(1024);
 					throwable.printStackTrace(new PrintStream(str, true));
 					result = "error:exception " + str.toString();
@@ -40,12 +37,8 @@ public class SocketShell extends Shell {
 					print(result);
 				}
 			}
-
-			System.err.println("where am i here?");
-
 		} catch (IOException e) {
 			try {
-				System.err.println("Shell closed, what ????");
 				writeLine("Shell closed");
 			} catch (IOException ex) {
 				System.out.println(ex.getClass().getName() + ": " + ex.getMessage());

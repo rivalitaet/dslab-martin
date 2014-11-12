@@ -72,6 +72,22 @@ public class ClientConnection implements Runnable {
 		return "credits:" + getUser().getCredits();
 	}
 
+	@Command("BUY")
+	public String buy(long newCredits) {
+		if (!isLoggedIn()) {
+			return "error:login_first";
+		}
+
+		try {
+			user.addCredits(newCredits);
+		} catch (CommandException e) {
+			// This method is actually save, so this should never ever happen!
+			e.printStackTrace();
+		}
+
+		return "success:credits:" + user.getCredits();
+	}
+
 	@Command("LIST")
 	public String listCommands() {
 		if (!isLoggedIn()) {

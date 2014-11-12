@@ -115,6 +115,9 @@ public class Client implements IClientCli {
 			case "login_worked" :
 				return String.format("Willkommen %s!", msg);
 
+			case "credits" :
+				return String.format("Cool. You now have %s credits", msg);
+
 			default :
 				return "Success: " + msg;
 		}
@@ -177,10 +180,11 @@ public class Client implements IClientCli {
 		return receiveLines();
 	}
 
+	@Command
 	@Override
 	public String buy(long credits) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		sendLine("@BUY " + credits);
+		return receiveLines();
 	}
 
 	@Override
