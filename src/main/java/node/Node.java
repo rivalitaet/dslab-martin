@@ -3,8 +3,12 @@ package node;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +32,9 @@ public class Node implements INodeCli, Logger, Runnable {
 	private final int tcpPort;
 	private final String operators;
 	private final String logDir;
+	private final InetSocketAddress controllerAddress;
+	private final byte[] packetData;
+	private final DatagramSocket isAliveSocket;
 
 	private final AbstractShell shell;
 	private final PrintStream userResponseStream;
@@ -48,7 +55,7 @@ public class Node implements INodeCli, Logger, Runnable {
 	/**
 	 * Needed for shutdown.
 	 */
-	ServerSocket serverSocket = null;
+	private ServerSocket serverSocket = null;
 
 	/**
 	 * @param componentName
@@ -59,8 +66,10 @@ public class Node implements INodeCli, Logger, Runnable {
 	 *            the input stream to read user input from
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
+	 * @throws SocketException
 	 */
-	public Node(String componentName, Config config, InputStream userRequestStream, PrintStream userResponseStream) {
+	public Node(String componentName, Config config, InputStream userRequestStream, PrintStream userResponseStream)
+	                throws SocketException {
 		this.componentName = componentName;
 		this.userResponseStream = userResponseStream;
 
@@ -68,6 +77,13 @@ public class Node implements INodeCli, Logger, Runnable {
 		tcpPort = config.getInt("tcp.port");
 		operators = config.getString("node.operators");
 		logDir = config.getString("log.dir");
+
+		String controllerHost = config.getString("controller.host");
+		int controllerPort = config.getInt("controller.udp.port");
+		controllerAddress = new InetSocketAddress(controllerHost, controllerPort);
+
+		isAliveSocket = new DatagramSocket();
+		packetData = String.format("!alive %d %s", tcpPort, operators).getBytes();
 
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.shell.register(this);
@@ -122,7 +138,14 @@ public class Node implements INodeCli, Logger, Runnable {
 	}
 
 	protected void sendAlive() {
-		// System.err.println("Send alive");
+		try {
+			DatagramPacket packet = new DatagramPacket(packetData, packetData.length, controllerAddress);
+			isAliveSocket.send(packet);
+			System.out.println(new String(packet.getData()));
+		} catch (IOException e) {
+			userResponseStream.print("Error with sending isAlive packet");
+			e.printStackTrace(userResponseStream);
+		}
 	}
 
 	@Command
@@ -153,8 +176,14 @@ public class Node implements INodeCli, Logger, Runnable {
 	 *            represents the name of the configuration
 	 */
 	public static void main(String[] args) {
-		Node node = new Node(args[0], new Config(args[0]), System.in, System.out);
-		new Thread(node).start();
+		Node node;
+		try {
+			node = new Node(args[0], new Config(args[0]), System.in, System.out);
+			new Thread(node).start();
+		} catch (SocketException e) {
+			System.err.println("Could not open UDP socket. That's sad. ");
+			e.printStackTrace();
+		}
 	}
 
 	private void createDirectoryRecursive(Path directoryPath) {

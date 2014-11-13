@@ -9,12 +9,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import model.computation.Calculator;
-import model.computation.SimpleCalculator;
+import shell.AbstractShell;
 import shell.CliShell;
 import shell.Command;
-import shell.AbstractShell;
 import util.Config;
 import util.StringUtils;
 
@@ -28,7 +29,9 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 	private final HashMap<String, User> users = new HashMap<>();
 
-	private final Calculator calc = new SimpleCalculator();
+	private final RemoteCalculator calc;
+
+	private final ExecutorService pool = Executors.newCachedThreadPool();
 
 	/**
 	 * @param componentName
@@ -48,6 +51,9 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		this.udpPort = config.getInt("udp.port");
 
 		initUsers(userConfig);
+
+		calc = new RemoteCalculator(udpPort, userResponseStream);
+		new Thread(calc).start();
 	}
 
 	public Calculator getCalc() {
@@ -95,14 +101,15 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		shell.register(this);
 		new Thread(shell).start();
 
+		handleNodes();
+
 		try (ServerSocket serverSocket = new ServerSocket(tcpPort)) {
 
 			while (true) {
 				try {
 					Socket socket = serverSocket.accept();
 					ClientConnection clientConnection = new ClientConnection(socket, this);
-					Thread thread = new Thread(clientConnection);
-					thread.start();
+					pool.execute(clientConnection);
 
 				} catch (IOException e) {
 					userResponseStream.println("A socket caught an exception");
@@ -124,6 +131,10 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			e.printStackTrace();
 			// who cares, if anything fails here, we can't do nothing anyways :)
 		}
+	}
+
+	protected void handleNodes() {
+
 	}
 
 	@Override
