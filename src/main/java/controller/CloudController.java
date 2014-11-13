@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -42,9 +44,10 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	 *            the input stream to read user input from
 	 * @param userResponseStream
 	 *            the output stream to write the console output to
+	 * @throws SocketException
 	 */
 	public CloudController(String componentName, Config config, Config userConfig, InputStream userRequestStream,
-	                PrintStream userResponseStream) {
+	                PrintStream userResponseStream) throws SocketException {
 		this.userResponseStream = userResponseStream;
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.tcpPort = config.getInt("tcp.port");
@@ -101,8 +104,6 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		shell.register(this);
 		new Thread(shell).start();
 
-		handleNodes();
-
 		try (ServerSocket serverSocket = new ServerSocket(tcpPort)) {
 
 			while (true) {
@@ -133,14 +134,22 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		}
 	}
 
-	protected void handleNodes() {
-
-	}
-
+	@Command
 	@Override
 	public String nodes() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Iterator<Node> it = calc.getNodes();
+		List<String> strings = new LinkedList<>();
+
+		int i = 1;
+		while (it.hasNext()) {
+			strings.add(i + ". " + it.next().toString());
+		}
+
+		if (strings.size() == 0) {
+			return "No nodes";
+		}
+
+		return StringUtils.join("\n", strings);
 	}
 
 	@Override
@@ -177,8 +186,15 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		Config config = new Config("controller");
 		Config userConfig = new Config("user");
 
-		CloudController controller = new CloudController(args[0], config, userConfig, System.in, System.out);
-		new Thread(controller).start();
+		try {
+			CloudController controller = new CloudController(args[0], config, userConfig, System.in, System.out);
+			new Thread(controller).start();
+		} catch (SocketException e) {
+			String msg = String.format("Not possible to create the socket");
+			System.out.println(msg);
+			e.printStackTrace();
+		}
+
 	}
 
 }

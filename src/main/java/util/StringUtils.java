@@ -1,6 +1,6 @@
 package util;
 
-import java.util.List;
+import java.util.Iterator;
 
 public class StringUtils {
 
@@ -17,15 +17,24 @@ public class StringUtils {
 	 * @return a new {@code String} that is composed of the {@code strings} separated by the
 	 *         {@code separator}
 	 */
-	public static String join(String separator, List<String> strings) {
+	public static String join(String separator, Iterable<String> strings) {
 		StringBuilder appendable = new StringBuilder();
-		if (strings != null && strings.size() > 0) {
-			separator = separator != null ? separator : "";
-			appendable.append(strings.get(0));
-			for (int i = 1; i < strings.size(); i++) {
-				appendable.append(separator).append(strings.get(i));
-			}
+		separator = separator != null ? separator : "";
+
+		if (strings == null) {
+			return "";
 		}
+
+		Iterator<String> it = strings.iterator();
+
+		if (strings != null && it.hasNext()) {
+			appendable.append(it.next());
+		}
+
+		while (it.hasNext()) {
+			appendable.append(separator).append(it.next());
+		}
+
 		return appendable.toString();
 	}
 }
