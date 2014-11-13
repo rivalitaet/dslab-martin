@@ -14,21 +14,19 @@ import model.computation.Calculator;
 import model.computation.SimpleCalculator;
 import shell.CliShell;
 import shell.Command;
-import shell.Shell;
+import shell.AbstractShell;
 import util.Config;
 import util.StringUtils;
 
 public class CloudController implements ICloudControllerCli, Runnable {
 
-	private final InputStream userRequestStream;
 	private final PrintStream userResponseStream;
-	private final Shell shell;
+	private final AbstractShell shell;
 
 	private final int tcpPort;
 	private final int udpPort;
 
 	private final HashMap<String, User> users = new HashMap<>();
-	private final HashMap<User, ClientConnection> logins = new HashMap<>();
 
 	private final Calculator calc = new SimpleCalculator();
 
@@ -44,7 +42,6 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	 */
 	public CloudController(String componentName, Config config, Config userConfig, InputStream userRequestStream,
 	                PrintStream userResponseStream) {
-		this.userRequestStream = userRequestStream;
 		this.userResponseStream = userResponseStream;
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.tcpPort = config.getInt("tcp.port");

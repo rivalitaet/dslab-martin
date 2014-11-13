@@ -3,9 +3,9 @@ package shell;
 import java.lang.annotation.*;
 
 /**
- * Marks methods to be treated as commands to be invoked by a {@link Shell}.
+ * Marks methods to be treated as commands to be invoked by a {@link AbstractShell}.
  * 
- * @see Shell#register(Object)
+ * @see AbstractShell#register(Object)
  */
 @Documented
 @Inherited

@@ -6,14 +6,14 @@ import java.net.Socket;
 import model.computation.CalculationException;
 import model.computation.Computation;
 import shell.Command;
-import shell.Shell;
+import shell.AbstractShell;
 import shell.SocketShell;
 
 public class ClientConnection implements Runnable {
 
 	private final Socket socket;
 	private final CloudController controller;
-	private final Shell shell;
+	private final AbstractShell shell;
 
 	private User user = null;
 

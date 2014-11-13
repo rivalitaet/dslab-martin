@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class SocketShell extends Shell {
+public class SocketShell extends AbstractShell {
 
 	protected String getCommandSign() {
 		return "@";

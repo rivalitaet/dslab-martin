@@ -10,12 +10,12 @@ import java.util.Scanner;
 
 import shell.CliShell;
 import shell.Command;
-import shell.Shell;
+import shell.AbstractShell;
 import util.Config;
 
 public class Client implements IClientCli {
 
-	private final Shell shell;
+	private final AbstractShell shell;
 	private final Socket controllerSocket;
 	private final Scanner controllerScanner;
 	private final PrintWriter controllerWriter;

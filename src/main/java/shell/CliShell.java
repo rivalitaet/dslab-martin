@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 
-public class CliShell extends Shell {
+public class CliShell extends AbstractShell {
 
 	protected String getCommandSign() {
 		return "!";

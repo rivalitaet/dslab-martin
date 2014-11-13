@@ -23,7 +23,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
  * Reads commands from an {@link InputStream}, executes them and writes the result to a
  * {@link OutputStream}.
  */
-public abstract class Shell implements Runnable, Closeable {
+public abstract class AbstractShell implements Runnable, Closeable {
 
 	private static final PrintStream stdout = System.out;
 	private static final InputStream stdin = System.in;
@@ -59,7 +59,7 @@ public abstract class Shell implements Runnable, Closeable {
 	 * @param out
 	 *            the {@code OutputStream} to write messages to
 	 */
-	public Shell(String name, InputStream in, OutputStream out) {
+	public AbstractShell(String name, InputStream in, OutputStream out) {
 		this.name = name;
 		this.out = out;
 		this.readMonitor = in;
@@ -169,7 +169,7 @@ public abstract class Shell implements Runnable, Closeable {
 	}
 
 	/**
-	 * Closes this {@link Shell} by closing the provided streams.<br/>
+	 * Closes this {@link AbstractShell} by closing the provided streams.<br/>
 	 * Note that {@link System#in} and {@link System#out} are not closed. They have to be closed
 	 * manually since closing them may affect other objects.
 	 */
@@ -202,7 +202,7 @@ public abstract class Shell implements Runnable, Closeable {
 	 * 
 	 * @param obj
 	 *            the object implementing commands to be registered
-	 * @see shell.Shell.ShellCommandDefinition
+	 * @see shell.AbstractShell.ShellCommandDefinition
 	 */
 	public void register(Object obj) {
 		for (Method method : obj.getClass().getMethods()) {
