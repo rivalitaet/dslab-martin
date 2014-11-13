@@ -5,8 +5,8 @@ import java.net.Socket;
 
 import model.computation.CalculationException;
 import model.computation.Computation;
-import shell.Command;
 import shell.AbstractShell;
+import shell.Command;
 import shell.SocketShell;
 
 public class ClientConnection implements Runnable {
@@ -105,10 +105,16 @@ public class ClientConnection implements Runnable {
 		try {
 			Computation computation = Computation.getComputation(calculation, controller.getCalc());
 
+			// TODO remove
+			System.err.println(computation);
+
 			int price = computation.getPrice();
 			user.charge(price);
 
 			int result = computation.getResult();
+
+			System.err.println("result: " + result);
+
 			return "result:" + computation.toString() + ":" + result;
 
 		} catch (CommandException e) {

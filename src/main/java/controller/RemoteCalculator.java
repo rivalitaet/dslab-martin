@@ -3,12 +3,15 @@ package controller;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,28 +37,99 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 		return nodes.values().iterator();
 	}
 
-	@Override
-	public int add(int a, int b) {
-		// TODO Auto-generated method stub
-		return 0;
+	protected Node getNode(String operator) throws CalculationException {
+		Iterator<Node> it = getNodes();
+		if (it.hasNext()) {
+			return it.next();
+		} else {
+			throw new CalculationException(String.format("No calculation-node available for '%s'", operator));
+		}
+	}
+
+	protected Socket connect(String operator) throws CalculationException {
+		Node node = getNode(operator);
+
+		try {
+			Socket socket = new Socket();
+			socket.connect(node.getAddress());
+
+			return socket;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new CalculationException("Connection to node failed");
+		}
+	}
+
+	private int send(String msg, Node node) throws CalculationException {
+		String line = null;
+
+		Socket socket = null;
+		PrintWriter writer = null;
+		Scanner sc = null;
+
+		try {
+			socket = new Socket();
+			socket.connect(node.getAddress());
+
+			writer = new PrintWriter(socket.getOutputStream());
+			writer.println(msg);
+			writer.flush();
+			sc = new Scanner(socket.getInputStream());
+
+			if (sc.hasNextLine()) {
+				line = sc.nextLine();
+
+				System.err.println("RECEIVED: " + line);
+
+				if (line.startsWith("Error: ")) {
+					throw new CalculationException(line.substring(7));
+				}
+
+				return Integer.parseInt(line);
+			} else {
+				throw new CalculationException("No result from node");
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new CalculationException("Connection to node failed");
+		} catch (NumberFormatException e) {
+			throw new CalculationException(line);
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (writer != null) {
+				writer.close();
+			}
+			if (sc != null) {
+				sc.close();
+			}
+		}
 	}
 
 	@Override
-	public int substract(int a, int b) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int add(int a, int b) throws CalculationException {
+		return send(a + " + " + b, getNode("+"));
 	}
 
 	@Override
-	public int multiply(int a, int b) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int substract(int a, int b) throws CalculationException {
+		return send(a + " - " + b, getNode("+"));
+	}
+
+	@Override
+	public int multiply(int a, int b) throws CalculationException {
+		return send(a + " * " + b, getNode("+"));
 	}
 
 	@Override
 	public int divide(int a, int b) throws CalculationException {
-		// TODO Auto-generated method stub
-		return 0;
+		return send(a + " / " + b, getNode("+"));
 	}
 
 	@Override

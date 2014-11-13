@@ -146,7 +146,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		}
 
 		if (strings.size() == 0) {
-			return "No nodes";
+			return "No nodes at all";
 		}
 
 		return StringUtils.join("\n", strings);
