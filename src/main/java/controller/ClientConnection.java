@@ -102,18 +102,20 @@ public class ClientConnection implements Runnable {
 			return "error:login_first";
 		}
 
+		Computation computation = null;
 		try {
-			Computation computation = Computation.getComputation(calculation, controller.getCalc());
+			computation = Computation.getComputation(calculation, controller.getCalc());
+		} catch (CalculationException e) {
+			e.printStackTrace();
+			return "error:calculation_error:" + e.getMessage();
+		}
 
-			// TODO remove
-			System.err.println(computation);
-
-			int price = computation.getPrice();
-			user.charge(price);
+		try {
+			user.charge(computation.getMaxPrice());
 
 			int result = computation.getResult();
 
-			System.err.println("result: " + result);
+			System.out.println("result " + computation.toString() + " = " + result);
 
 			return "result:" + computation.toString() + ":" + result;
 
@@ -121,6 +123,14 @@ public class ClientConnection implements Runnable {
 			return "error:" + e.getMessage();
 		} catch (CalculationException e) {
 			return "error:calculation_error:" + e.getMessage();
+		} finally {
+			try {
+				System.out.println("maxPrice: " + computation.getMaxPrice());
+				System.out.println("price: " + computation.getPrice());
+				user.addCredits(computation.getMaxPrice() - computation.getPrice());
+			} catch (CommandException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

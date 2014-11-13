@@ -14,7 +14,12 @@ public class Number extends Computation {
 	}
 
 	@Override
-	public int getPrice() {
+	public long getPrice() {
+		return 0;
+	}
+
+	@Override
+	public long getMaxPrice() {
 		return 0;
 	}
 

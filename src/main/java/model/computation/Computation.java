@@ -6,7 +6,9 @@ public abstract class Computation {
 
 	public abstract int getResult() throws CalculationException;
 
-	public abstract int getPrice();
+	public abstract long getPrice();
+
+	public abstract long getMaxPrice();
 
 	public static Computation getComputation(String calculation, Calculator calc, String operators)
 	                throws CalculationException {

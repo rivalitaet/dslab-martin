@@ -53,7 +53,7 @@ public class User {
 		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
 	}
 
-	private synchronized void changeCredits(long delta) throws CommandException {
+	public synchronized void changeCredits(long delta) throws CommandException {
 		if (delta < 0 && credits + delta < 0) {
 			throw new CommandException("Not enough money");
 		}

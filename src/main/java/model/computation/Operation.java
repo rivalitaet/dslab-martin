@@ -7,6 +7,12 @@ public class Operation extends Computation {
 	protected final Calculator calc;
 	protected final String operator;
 
+	/**
+	 * Should be incremented to 50, when getResult() is called, and both parameters are already
+	 * executed
+	 */
+	protected volatile long price = 0;
+
 	public Operation(Computation a, Computation b, String operator, Calculator calc) {
 		this.a = a;
 		this.b = b;
@@ -16,25 +22,40 @@ public class Operation extends Computation {
 
 	@Override
 	public int getResult() throws CalculationException {
+		System.out.println("getResult called: " + this);
+
+		int aRes = a.getResult();
+		int bRes = b.getResult();
+
+		this.price = 50;
+
 		switch (operator) {
 			case "+" :
-				return calc.add(a.getResult(), b.getResult());
+				return calc.add(aRes, bRes);
 			case "-" :
-				return calc.substract(a.getResult(), b.getResult());
+				return calc.substract(aRes, bRes);
 			case "*" :
-				return calc.multiply(a.getResult(), b.getResult());
+				return calc.multiply(aRes, bRes);
 			case "/" :
-				return calc.divide(a.getResult(), b.getResult());
+				return calc.divide(aRes, bRes);
 			default :
+				// getComputation should only create valid computations
 				throw new CalculationException("Operator '" + operator + "' is not supported");
 		}
 	}
 
 	@Override
-	public int getPrice() {
-		return a.getPrice() + b.getPrice() + 50;
+	public long getPrice() {
+		System.out.println("getPrice " + this + ": " + (a.getPrice() + b.getPrice() + price));
+		return a.getPrice() + b.getPrice() + price;
 	}
 
+	@Override
+	public long getMaxPrice() {
+		return a.getMaxPrice() + b.getMaxPrice() + 50;
+	}
+
+	@Override
 	public String toString() {
 		return "(" + a + " " + operator + " " + b + ")";
 	}
