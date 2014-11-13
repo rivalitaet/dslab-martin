@@ -15,17 +15,15 @@ public class Calc extends SimpleCalculator implements Runnable, Closeable {
 	private final Socket socket;
 	private final Scanner inputScanner;
 	private final PrintWriter outputWriter;
+	private final Logger logger;
 	private final String operators;
 
-	public Calc(Socket socket, String operators) throws IOException {
+	public Calc(Socket socket, Logger logger, String operators) throws IOException {
 		this.socket = socket;
 		inputScanner = new Scanner(socket.getInputStream());
 		outputWriter = new PrintWriter(socket.getOutputStream(), true);
+		this.logger = logger;
 		this.operators = operators;
-	}
-
-	private void log(String input, String output) {
-		System.out.println("LOG: " + input + " >==> " + output);
 	}
 
 	@Override
@@ -36,7 +34,7 @@ public class Calc extends SimpleCalculator implements Runnable, Closeable {
 
 			try {
 				if (line.split("\\s").length == 3) {
-					Computation c = Computation.getComputation(line, this);
+					Computation c = Computation.getComputation(line, this, operators);
 					output = Integer.toString(c.getResult());
 				} else {
 					throw new CalculationException("Only 'a <op> b' is allowed");
@@ -45,14 +43,13 @@ public class Calc extends SimpleCalculator implements Runnable, Closeable {
 				output = "Error: " + e.getMessage();
 			}
 
-			log(line, output);
+			logger.log(line, output);
 			outputWriter.println(output);
 
 		} else {
 			String msg = "No input received :/ ";
-			log(msg, "");
+			logger.log(msg, "");
 			outputWriter.write(msg);
-			System.err.println(msg);
 		}
 
 		try {
