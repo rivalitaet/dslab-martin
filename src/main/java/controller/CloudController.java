@@ -168,6 +168,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		return StringUtils.join("\n", parts);
 	}
 
+	@Command
 	@Override
 	public String exit() throws IOException {
 		shell.close();
