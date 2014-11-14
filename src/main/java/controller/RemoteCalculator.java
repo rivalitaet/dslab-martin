@@ -23,14 +23,16 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 	private final int bufferLength = 1024;
 	private final PrintStream userResponseStream;
 	private final DatagramSocket socket;
+	private final long nodeTimeout;
 
 	private final ConcurrentMap<InetSocketAddress, Node> nodes = new ConcurrentHashMap<>();
 
 	private volatile boolean isRunning = false;
 
-	public RemoteCalculator(int udpPort, PrintStream userResponseStream) throws SocketException {
+	public RemoteCalculator(int udpPort, PrintStream userResponseStream, long maxNodeTimeout) throws SocketException {
 		this.userResponseStream = userResponseStream;
 		socket = new DatagramSocket(udpPort);
+		this.nodeTimeout = maxNodeTimeout;
 	}
 
 	public Iterator<Node> getNodes() {
@@ -171,11 +173,13 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 		}
 
 		int port = Integer.parseInt(parts[1]);
-
 		InetSocketAddress address = new InetSocketAddress(packet.getAddress(), port);
-		Node node = new Node(address, parts[2]);
+		Node newNode = new Node(address, parts[2], nodeTimeout);
 
-		nodes.putIfAbsent(node.getAddress(), node);
+		nodes.putIfAbsent(address, newNode);
+
+		Node realNode = nodes.get(address);
+		realNode.updateActive();
 	}
 
 	@Override

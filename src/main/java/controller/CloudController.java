@@ -52,10 +52,11 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.tcpPort = config.getInt("tcp.port");
 		this.udpPort = config.getInt("udp.port");
+		long nodeTimeout = config.getInt("node.timeout");
 
 		initUsers(userConfig);
 
-		calc = new RemoteCalculator(udpPort, userResponseStream);
+		calc = new RemoteCalculator(udpPort, userResponseStream, nodeTimeout);
 		new Thread(calc).start();
 	}
 
