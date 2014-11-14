@@ -45,7 +45,9 @@ public class Client implements IClientCli {
 
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.shell.register(this);
-		shell.run();
+		new Thread(shell).start();
+
+		System.err.println("client now started");
 	}
 
 	private String parseError(String type) {
@@ -251,8 +253,7 @@ public class Client implements IClientCli {
 		} catch (UnknownHostException e) {
 			System.err.println("Cloud-Controller host known");
 		} catch (IOException e) {
-			System.err.println("Not possible to connect the client");
-			e.printStackTrace();
+			System.err.println("Not possible to connect the client. Is the cloud running?");
 		}
 	}
 

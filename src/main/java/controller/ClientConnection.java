@@ -33,8 +33,6 @@ public class ClientConnection implements Runnable {
 	}
 
 	public void close() {
-		System.out.println("Connection was closed");
-
 		logout();
 
 		try {
@@ -120,22 +118,21 @@ public class ClientConnection implements Runnable {
 			user.charge(computation.getMaxPrice());
 
 			int result = computation.getResult();
-
-			System.out.println("result " + computation.toString() + " = " + result);
-
 			return "result:" + computation.toString() + ":" + result;
 
 		} catch (CommandException e) {
 			return "error:" + e.getMessage();
 		} catch (CalculationException e) {
-			return "error:calculation_error:" + e.getMessage();
-		} finally {
 			try {
 				// refund, what has been charged too much
 				user.addCredits(computation.getMaxPrice() - computation.getPrice());
-			} catch (CommandException e) {
-				return "error:" + e.getMessage();
+			} catch (CommandException commandException) {
+				// this should never happen!
+				return "error:" + commandException.getMessage();
 			}
+			return "error:calculation_error:" + e.getMessage();
+		} finally {
+
 		}
 	}
 

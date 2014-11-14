@@ -1,0 +1,7 @@
+*	CloudController	controller
+
+
+controller:	!users
+>			verify(".*alice.*offline.*bill.*offline.*", T(test.util.Flag).REGEX)
+
+controller: !exit

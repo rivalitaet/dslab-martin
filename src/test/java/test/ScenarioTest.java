@@ -1,5 +1,22 @@
 package test;
 
+import static org.junit.Assert.assertThat;
+import static test.scenario.ScenarioUtils.listSteps;
+import static util.TestUtils.contains;
+import static util.TestUtils.join;
+import static util.TestUtils.repeat;
+
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -9,6 +26,7 @@ import org.springframework.expression.EvaluationException;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+
 import test.scenario.ScenarioRunner;
 import test.scenario.ScenarioUtils;
 import test.scenario.Step;
@@ -16,17 +34,6 @@ import test.util.Flag;
 import test.util.PatternMatcher;
 import util.TestInputStream;
 import util.TestOutputStream;
-
-import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-
-import static org.junit.Assert.assertThat;
-import static test.scenario.ScenarioUtils.listSteps;
-import static util.TestUtils.*;
 
 /**
  * Executes the test scenarios.
@@ -79,8 +86,8 @@ public class ScenarioTest {
 				String instruction = "create" + parts[1];
 				String componentName = parts[2];
 
-				Method method = factory.getClass().getMethod(instruction, String.class,
-				                TestInputStream.class, TestOutputStream.class);
+				Method method = factory.getClass().getMethod(instruction, String.class, TestInputStream.class,
+				                TestOutputStream.class);
 				if (method == null) {
 					throw new IllegalArgumentException(String.format("Method '%s' not found.", instruction));
 				}
@@ -158,8 +165,8 @@ public class ScenarioTest {
 
 		String msg = String.format("String must %s%s '%s' but was:%s", contains(Flag.NOT, (Object[]) flags)
 		                ? "NOT "
-		                : "", contains(Flag.REGEX, (Object[]) flags) ? "match pattern" : "contain", expected,
-		                lines.size() > 1 ? "\n" + actual : String.format(" '%s'", actual));
+		                : "", contains(Flag.REGEX, (Object[]) flags) ? "match pattern" : "contain", expected, lines
+		                .size() > 1 ? "\n" + actual : String.format(" '%s'", actual));
 
 		matcher = contains(Flag.NOT, (Object[]) flags) ? CoreMatchers.not(matcher) : matcher;
 
@@ -170,6 +177,7 @@ public class ScenarioTest {
 	 * Represents a single component and its input and output streams.
 	 */
 	static class CliComponent {
+
 		Object component;
 		TestInputStream in;
 		TestOutputStream out;

@@ -12,7 +12,7 @@ alice:		!credits
 >			verify("500")
 
 controller:	!users
->			verify(".*alice.*online.*bill.*offline.*", T(util.Flag).REGEX)
+>			verify(".*alice.*online.*bill.*offline.*", T(test.util.Flag).REGEX)
 
 controller: !exit
 alice:		!exit

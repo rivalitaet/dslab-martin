@@ -112,7 +112,7 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 			if (sc.hasNextLine()) {
 				line = sc.nextLine();
 
-				System.err.println("RECEIVED: " + line);
+				// System.err.println("RECEIVED: " + line);
 
 				if (line.startsWith("Error: ")) {
 					throw new CalculationException(line.substring(7));

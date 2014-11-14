@@ -62,8 +62,6 @@ public class Calc extends SimpleCalculator implements Runnable, Closeable {
 
 	@Override
 	public void close() throws IOException {
-		System.out.println("Goodbye, CloudController");
-
 		try {
 			socket.close();
 		} catch (IOException e) {

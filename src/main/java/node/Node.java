@@ -181,7 +181,6 @@ public class Node implements INodeCli, Logger, Runnable {
 
 	private void createDirectoryRecursive(Path directoryPath) {
 		directoryPath = directoryPath.toAbsolutePath();
-		System.out.println("createParent: " + directoryPath);
 
 		if (!Files.exists(directoryPath.getParent())) {
 			createDirectoryRecursive(directoryPath.getParent());
