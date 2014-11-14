@@ -1,6 +1,3 @@
-Reflect about your solution!
-
-Summary:
 
 Details / Questions
 ===================
@@ -14,6 +11,7 @@ Details / Questions
    this?
  
  * Wouldn't a logging thread be nicer (and also avoid the ThreadLocal)?
+
 
 Status
 ======
