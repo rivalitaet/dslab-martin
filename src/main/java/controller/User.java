@@ -50,7 +50,7 @@ public class User {
 	@Override
 	public synchronized String toString() {
 		String onoff = isLoggedIn() ? "online" : "offline";
-		return String.format("%-10s %-7s Credits: %3d, %s", getUsername(), onoff, getCredits(), getHash());
+		return String.format("%-10s %-7s Credits: %3d", getUsername(), onoff, getCredits());
 	}
 
 	public synchronized void changeCredits(long delta) throws CommandException {
