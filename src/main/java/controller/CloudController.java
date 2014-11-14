@@ -116,9 +116,8 @@ public class CloudController implements ICloudControllerCli, Runnable {
 				} catch (IOException e) {
 					userResponseStream.println("A socket caught an exception");
 				} catch (Exception e) {
-					// TODO really handle closing problems
 					userResponseStream.println("AutoClose failed!");
-					e.printStackTrace();
+					e.printStackTrace(userResponseStream);
 				}
 			}
 

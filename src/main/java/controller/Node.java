@@ -20,6 +20,10 @@ public class Node implements Comparable<Node> {
 		return operations;
 	}
 
+	public boolean hasOperation(String operation) {
+		return operations.contains(operation);
+	}
+
 	public synchronized void increaseUsage(String result) {
 		int digits = result.trim().length();
 		usage += 50 * digits;
@@ -32,9 +36,6 @@ public class Node implements Comparable<Node> {
 	public boolean isOnline() {
 		Date now = new Date();
 		long diff = now.getTime() - lastActive.getTime();
-
-		System.out.println("diff. " + diff);
-
 		return diff < maxTimeout;
 	}
 

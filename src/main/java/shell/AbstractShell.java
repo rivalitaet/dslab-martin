@@ -238,7 +238,7 @@ public abstract class AbstractShell implements Runnable, Closeable {
 		String cmdName = pos >= 0 ? cmd.substring(0, pos) : cmd;
 		ShellCommandDefinition cmdDef = commandMap.get(cmdName);
 		if (cmdDef == null) {
-			throw new IllegalArgumentException(String.format("Command '%s' not registered.", cmdName));
+			throw new IllegalArgumentException(String.format("Command '%s' is not registered.", cmdName));
 		}
 
 		String[] parts = cmd.split("\\s+", cmdDef.targetMethod.getParameterTypes().length + 1);

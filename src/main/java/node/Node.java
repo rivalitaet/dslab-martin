@@ -131,7 +131,7 @@ public class Node implements INodeCli, Logger, Runnable {
 		try {
 			exit();
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace(userResponseStream);
 			// who cares, if anything fails here, we can't do nothing anyways :)
 		}
 
@@ -141,7 +141,6 @@ public class Node implements INodeCli, Logger, Runnable {
 		try {
 			DatagramPacket packet = new DatagramPacket(packetData, packetData.length, controllerAddress);
 			isAliveSocket.send(packet);
-			System.out.println(new String(packet.getData()));
 		} catch (IOException e) {
 			userResponseStream.print("Error with sending isAlive packet");
 			e.printStackTrace(userResponseStream);
@@ -164,12 +163,6 @@ public class Node implements INodeCli, Logger, Runnable {
 		return "Tschau mit au!";
 	}
 
-	@Override
-	public String history(int numberOfRequests) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * @param args
 	 *            the first argument is the name of the {@link Node} component, which also
@@ -181,8 +174,8 @@ public class Node implements INodeCli, Logger, Runnable {
 			node = new Node(args[0], new Config(args[0]), System.in, System.out);
 			new Thread(node).start();
 		} catch (SocketException e) {
-			System.err.println("Could not open UDP socket. That's sad. ");
-			e.printStackTrace();
+			System.err.println("Could not open UDP socket (Maybe it's in use). That's sad. ");
+			// e.printStackTrace();
 		}
 	}
 
@@ -220,7 +213,6 @@ public class Node implements INodeCli, Logger, Runnable {
 			e.printStackTrace(userResponseStream);
 		}
 
-		// TODO remove
-		System.out.println("LOG: " + input + " >==> " + output);
+		// System.out.println("LOG: " + input + " >==> " + output);
 	}
 }

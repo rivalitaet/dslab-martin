@@ -1,5 +1,7 @@
 package model.computation;
 
+import controller.NoNodeAvailableException;
+
 public class Operation extends Computation {
 
 	protected final Computation a;
@@ -27,18 +29,23 @@ public class Operation extends Computation {
 
 		this.price = 50;
 
-		switch (operator) {
-			case "+" :
-				return calc.add(aRes, bRes);
-			case "-" :
-				return calc.substract(aRes, bRes);
-			case "*" :
-				return calc.multiply(aRes, bRes);
-			case "/" :
-				return calc.divide(aRes, bRes);
-			default :
-				// getComputation should only create valid computations
-				throw new CalculationException("Operator '" + operator + "' is not supported");
+		try {
+			switch (operator) {
+				case "+" :
+					return calc.add(aRes, bRes);
+				case "-" :
+					return calc.substract(aRes, bRes);
+				case "*" :
+					return calc.multiply(aRes, bRes);
+				case "/" :
+					return calc.divide(aRes, bRes);
+				default :
+					// getComputation should only create valid computations
+					throw new CalculationException("Operator '" + operator + "' is not supported");
+			}
+		} catch (NoNodeAvailableException e) {
+			this.price = 0;
+			throw e;
 		}
 	}
 

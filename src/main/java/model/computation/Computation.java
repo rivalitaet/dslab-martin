@@ -64,6 +64,7 @@ public abstract class Computation {
 	public static void main(String[] args) {
 		Calculator calc = new SimpleCalculator();
 
+		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(System.in);
 
 		while (sc.hasNextLine()) {

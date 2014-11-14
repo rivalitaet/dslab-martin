@@ -95,7 +95,9 @@ public class ClientConnection implements Runnable {
 			return "error:login_first";
 		}
 
-		return "list:+-*/";
+		String commands = StringUtils.join("", controller.getCalc().getOperations());
+
+		return "list:" + commands;
 	}
 
 	@Command("COMPUTE")

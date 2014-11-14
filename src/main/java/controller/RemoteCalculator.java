@@ -11,10 +11,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,16 +49,34 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 
 		List<Node> possibleNodes = new LinkedList<>();
 		while (it.hasNext()) {
-			possibleNodes.add(it.next());
+			Node node = it.next();
+			if (node.isOnline() && node.hasOperation(operator)) {
+				possibleNodes.add(node);
+			}
 		}
-
-		Collections.sort(possibleNodes);
 
 		if (possibleNodes.isEmpty()) {
 			throw new NoNodeAvailableException(String.format("No calculation-node available for '%s'", operator));
 		}
 
+		Collections.sort(possibleNodes);
+
 		return possibleNodes.get(0);
+	}
+
+	@Override
+	public Set<String> getOperations() {
+		Iterator<Node> it = getNodes();
+		Set<String> operations = new HashSet<>();
+
+		while (it.hasNext()) {
+			Node node = it.next();
+			if (node.isOnline()) {
+				operations.addAll(node.getOperations());
+			}
+		}
+
+		return operations;
 	}
 
 	protected Socket connect(String operator) throws CalculationException {
@@ -209,4 +229,5 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 	public void close() throws IOException {
 		isRunning = false;
 	}
+
 }

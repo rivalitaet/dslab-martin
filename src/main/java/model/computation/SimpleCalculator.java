@@ -1,5 +1,8 @@
 package model.computation;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class SimpleCalculator implements Calculator {
 
 	@Override
@@ -31,6 +34,18 @@ public class SimpleCalculator implements Calculator {
 		} else {
 			return x;
 		}
+	}
+
+	@Override
+	public Set<String> getOperations() {
+		Set<String> operations = new LinkedHashSet<String>(4);
+
+		operations.add("+");
+		operations.add("-");
+		operations.add("*");
+		operations.add("/");
+
+		return operations;
 	}
 
 }
