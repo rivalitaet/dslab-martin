@@ -10,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -185,8 +186,11 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 			try {
 				byte[] buf = new byte[bufferLength];
 				DatagramPacket packet = new DatagramPacket(buf, buf.length);
+				// socket.setSoTimeout((int) nodeTimeout);
 				socket.receive(packet);
 				handlePacket(packet);
+			} catch (SocketTimeoutException e) {
+				// just do it again
 			} catch (IOException e) {
 				if (isRunning) {
 					String msg = "Error while receiving datagram packages: ";
