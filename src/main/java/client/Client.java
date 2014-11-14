@@ -46,8 +46,6 @@ public class Client implements IClientCli {
 		this.shell = new CliShell(componentName, userRequestStream, userResponseStream);
 		this.shell.register(this);
 		new Thread(shell).start();
-
-		System.err.println("client now started");
 	}
 
 	private String parseError(String type) {
@@ -127,7 +125,7 @@ public class Client implements IClientCli {
 	private String parseSuccess(String type, String msg) {
 		switch (type) {
 			case "login_worked" :
-				return String.format("Willkommen %s!", msg);
+				return String.format("Willkommen %s! Successfully logged in. ", msg);
 
 			case "credits" :
 				return String.format("Cool. You now have %s credits", msg);
