@@ -188,9 +188,11 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 				socket.receive(packet);
 				handlePacket(packet);
 			} catch (IOException e) {
-				String msg = "Error while receiving datagram packages: ";
-				userResponseStream.print(msg);
-				e.printStackTrace(userResponseStream);
+				if (isRunning) {
+					String msg = "Error while receiving datagram packages: ";
+					userResponseStream.print(msg);
+					e.printStackTrace(userResponseStream);
+				}
 			}
 		}
 
@@ -228,6 +230,8 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 	@Override
 	public void close() throws IOException {
 		isRunning = false;
+
+		socket.close();
 	}
 
 }

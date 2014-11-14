@@ -258,7 +258,7 @@ public class Client implements IClientCli {
 
 	@Override
 	public String authenticate(String username) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO in lab 2: Auto-generated method stub
 		return null;
 	}
 

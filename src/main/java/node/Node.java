@@ -218,13 +218,13 @@ public class Node implements INodeCli, Logger, Runnable {
 
 	@Override
 	public String history(int numberOfRequests) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO in lab 2 Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String resources() throws IOException {
-		// TODO Auto-generated method stub
+		// TODO in lab 2 Auto-generated method stub
 		return null;
 	}
 }

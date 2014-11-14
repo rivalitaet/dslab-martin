@@ -35,6 +35,9 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 	private final ExecutorService pool = Executors.newCachedThreadPool();
 
+	private ServerSocket serverSocket;
+	private volatile boolean isRunning = false;
+
 	/**
 	 * @param componentName
 	 *            the name of the component - represented in the prompt
@@ -102,19 +105,24 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 	@Override
 	public void run() {
+		isRunning = true;
+
 		shell.register(this);
 		new Thread(shell).start();
 
 		try (ServerSocket serverSocket = new ServerSocket(tcpPort)) {
+			this.serverSocket = serverSocket;
 
-			while (true) {
+			while (isRunning) {
 				try {
 					Socket socket = serverSocket.accept();
 					ClientConnection clientConnection = new ClientConnection(socket, this);
 					pool.execute(clientConnection);
 
 				} catch (IOException e) {
-					userResponseStream.println("A socket caught an exception");
+					if (isRunning) {
+						userResponseStream.println("A socket caught an exception");
+					}
 				} catch (Exception e) {
 					userResponseStream.println("AutoClose failed!");
 					e.printStackTrace(userResponseStream);
@@ -171,6 +179,20 @@ public class CloudController implements ICloudControllerCli, Runnable {
 	@Command
 	@Override
 	public String exit() throws IOException {
+		isRunning = false;
+
+		try {
+			this.serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace(userResponseStream);
+		}
+
+		try {
+			calc.close();
+		} catch (IOException e) {
+			e.printStackTrace(userResponseStream);
+		}
+
 		shell.close();
 		return "Now I'm gone :)";
 	}
