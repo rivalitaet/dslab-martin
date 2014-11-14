@@ -215,4 +215,16 @@ public class Node implements INodeCli, Logger, Runnable {
 
 		// System.out.println("LOG: " + input + " >==> " + output);
 	}
+
+	@Override
+	public String history(int numberOfRequests) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String resources() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
