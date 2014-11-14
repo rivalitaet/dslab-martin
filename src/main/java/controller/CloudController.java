@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -7,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +39,20 @@ public class CloudController implements ICloudControllerCli, Runnable {
 
 	private ServerSocket serverSocket;
 	private volatile boolean isRunning = false;
+
+	private final Set<Closeable> openConnections = new HashSet<>();
+
+	protected void addOpenConnection(Closeable connection) {
+		synchronized (openConnections) {
+			openConnections.add(connection);
+		}
+	}
+
+	public void removeOpenConnection(Closeable connection) {
+		synchronized (openConnections) {
+			openConnections.remove(connection);
+		}
+	}
 
 	/**
 	 * @param componentName
@@ -118,6 +134,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 					Socket socket = serverSocket.accept();
 					ClientConnection clientConnection = new ClientConnection(socket, this);
 					pool.execute(clientConnection);
+					addOpenConnection(clientConnection);
 
 				} catch (IOException e) {
 					if (isRunning) {
@@ -191,6 +208,12 @@ public class CloudController implements ICloudControllerCli, Runnable {
 			calc.close();
 		} catch (IOException e) {
 			e.printStackTrace(userResponseStream);
+		}
+
+		synchronized (openConnections) {
+			for (Closeable connection : openConnections) {
+				connection.close();
+			}
 		}
 
 		shell.close();

@@ -150,9 +150,18 @@ public class Client implements IClientCli {
 			if (controllerScanner.hasNextLine()) {
 				String s = controllerScanner.nextLine();
 				return parseResult(s);
+			} else {
+				if (controllerSocket.isInputShutdown() || controllerSocket.isOutputShutdown()) {
+					try {
+						shell.writeLine("The cloud has closed the connection");
+					} catch (IOException e) {
+						// too late for handling
+					}
+					exit();
+				}
 			}
 		} catch (IllegalStateException e) {
-			System.err.println("The server has closed the connection");
+			System.err.println("The cloud has closed the connection");
 			exit();
 		}
 
@@ -232,7 +241,9 @@ public class Client implements IClientCli {
 			// we don't care here anymore
 			e.printStackTrace();
 		}
+
 		shell.close();
+
 		return "See you later!";
 	}
 

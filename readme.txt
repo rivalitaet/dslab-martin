@@ -23,13 +23,15 @@ Client
 ------
 
  * All commands work
- * Does not react to closed controllers
 
 
 Controller
 ----------
 
- * Everything should work
+ * All commands work
+ * UDP works
+ * Commands from Client work
+ * Commands to Nodes work
 
 
 Node

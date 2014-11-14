@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import shell.Command;
 import shell.SocketShell;
 import util.StringUtils;
 
-public class ClientConnection implements Runnable {
+public class ClientConnection implements Runnable, Closeable {
 
 	private final Socket socket;
 	private final CloudController controller;
@@ -32,9 +33,8 @@ public class ClientConnection implements Runnable {
 		close();
 	}
 
+	@Override
 	public void close() {
-		logout();
-
 		try {
 			socket.close();
 		} catch (IOException e) {
@@ -43,6 +43,7 @@ public class ClientConnection implements Runnable {
 		}
 
 		shell.close();
+		controller.removeOpenConnection(this);
 	}
 
 	public User getUser() {
