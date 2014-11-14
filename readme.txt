@@ -10,7 +10,7 @@ Details / Questions
  * Controller handles a list of nodes. Is there a _really_ nice way to handle
    this?
  
- * Wouldn't a logging thread be nicer (and also avoid the ThreadLocal)?
+ * Node: Wouldn't a logging thread be nicer (and also avoid the ThreadLocal)?
 
 
 Status
@@ -19,16 +19,16 @@ Status
 Client
 ------
 
- * 98% works
- * does not react to closed controllers
+ * All commands work
+ * Does not react to closed controllers
 	
 Controller
 ----------
 
- * 90 % works
- * Handling of nodes need to be improved.
+ * Everything should work
  
 Node
 ----
 
- * fully works like in specification
+ * Everything works
+ 
