@@ -1,0 +1,16 @@
+*	CloudController	controller
+*	Client			alice
+*	Node			node2
+
+alice:		!login alice 12345
+>			verify("success")
+
+alice:      !compute 7 / 2
+>           verify("4")
+
+alice:      !compute 7 / 3
+>           verify("2")
+
+controller: !exit
+alice:		!exit
+node2:		!exit

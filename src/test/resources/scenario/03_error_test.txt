@@ -1,0 +1,10 @@
+*	CloudController	controller
+*	Client			alice
+*	Node			node1
+
+alice:      !compute 7 + 2
+>           verify("login first")
+
+controller: !exit
+alice:		!exit
+node1:		!exit

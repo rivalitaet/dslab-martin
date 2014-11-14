@@ -37,3 +37,5 @@ alice:      !credits
 controller: !exit
 alice:		!exit
 node1:		!exit
+node2:		!exit
+node3:		!exit
