@@ -125,8 +125,6 @@ public class ClientConnection implements Runnable {
 			return "error:calculation_error:" + e.getMessage();
 		} finally {
 			try {
-				System.out.println("maxPrice: " + computation.getMaxPrice());
-				System.out.println("price: " + computation.getPrice());
 				user.addCredits(computation.getMaxPrice() - computation.getPrice());
 			} catch (CommandException e) {
 				e.printStackTrace();

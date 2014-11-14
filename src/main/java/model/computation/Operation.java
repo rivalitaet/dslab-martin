@@ -22,8 +22,6 @@ public class Operation extends Computation {
 
 	@Override
 	public int getResult() throws CalculationException {
-		System.out.println("getResult called: " + this);
-
 		int aRes = a.getResult();
 		int bRes = b.getResult();
 
@@ -46,7 +44,6 @@ public class Operation extends Computation {
 
 	@Override
 	public long getPrice() {
-		System.out.println("getPrice " + this + ": " + (a.getPrice() + b.getPrice() + price));
 		return a.getPrice() + b.getPrice() + price;
 	}
 
