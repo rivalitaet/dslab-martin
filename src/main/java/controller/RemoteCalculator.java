@@ -10,7 +10,10 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,11 +44,19 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 
 	protected Node getNode(String operator) throws CalculationException {
 		Iterator<Node> it = getNodes();
-		if (it.hasNext()) {
-			return it.next();
-		} else {
-			throw new CalculationException(String.format("No calculation-node available for '%s'", operator));
+
+		List<Node> possibleNodes = new LinkedList<>();
+		while (it.hasNext()) {
+			possibleNodes.add(it.next());
 		}
+
+		Collections.sort(possibleNodes);
+
+		if (possibleNodes.isEmpty()) {
+			throw new NoNodeAvailableException(String.format("No calculation-node available for '%s'", operator));
+		}
+
+		return possibleNodes.get(0);
 	}
 
 	protected Socket connect(String operator) throws CalculationException {
@@ -116,22 +127,34 @@ public class RemoteCalculator implements Calculator, Runnable, Closeable {
 
 	@Override
 	public int add(int a, int b) throws CalculationException {
-		return send(a + " + " + b, getNode("+"));
+		Node node = getNode("+");
+		int result = send(a + " + " + b, node);
+		node.increaseUsage(Integer.toString(result));
+		return result;
 	}
 
 	@Override
 	public int substract(int a, int b) throws CalculationException {
-		return send(a + " - " + b, getNode("+"));
+		Node node = getNode("-");
+		int result = send(a + " - " + b, node);
+		node.increaseUsage(Integer.toString(result));
+		return result;
 	}
 
 	@Override
 	public int multiply(int a, int b) throws CalculationException {
-		return send(a + " * " + b, getNode("+"));
+		Node node = getNode("*");
+		int result = send(a + " * " + b, node);
+		node.increaseUsage(Integer.toString(result));
+		return result;
 	}
 
 	@Override
 	public int divide(int a, int b) throws CalculationException {
-		return send(a + " / " + b, getNode("+"));
+		Node node = getNode("/");
+		int result = send(a + " / " + b, node);
+		node.increaseUsage(Integer.toString(result));
+		return result;
 	}
 
 	@Override

@@ -125,9 +125,10 @@ public class ClientConnection implements Runnable {
 			return "error:calculation_error:" + e.getMessage();
 		} finally {
 			try {
+				// refund, what has been charged too much
 				user.addCredits(computation.getMaxPrice() - computation.getPrice());
 			} catch (CommandException e) {
-				e.printStackTrace();
+				return "error:" + e.getMessage();
 			}
 		}
 	}

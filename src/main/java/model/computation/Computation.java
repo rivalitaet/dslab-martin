@@ -6,8 +6,15 @@ public abstract class Computation {
 
 	public abstract int getResult() throws CalculationException;
 
+	/**
+	 * The price of actually calculated operations. This should be {@code null}, before
+	 * {@link #getResult} was called.
+	 */
 	public abstract long getPrice();
 
+	/**
+	 * How much the computation would cost if everything works (without errors)
+	 */
 	public abstract long getMaxPrice();
 
 	public static Computation getComputation(String calculation, Calculator calc, String operators)
