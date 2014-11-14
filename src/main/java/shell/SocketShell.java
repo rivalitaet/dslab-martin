@@ -41,7 +41,7 @@ public class SocketShell extends AbstractShell {
 			try {
 				writeLine("Shell closed");
 			} catch (IOException ex) {
-				System.out.println(ex.getClass().getName() + ": " + ex.getMessage());
+				// System.out.println(ex.getClass().getName() + ": " + ex.getMessage());
 			}
 		}
 	}
