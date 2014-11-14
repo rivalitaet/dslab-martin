@@ -143,6 +143,7 @@ public class CloudController implements ICloudControllerCli, Runnable {
 		int i = 1;
 		while (it.hasNext()) {
 			strings.add(i + ". " + it.next().toString());
+			i++;
 		}
 
 		if (strings.size() == 0) {
