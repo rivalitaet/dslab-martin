@@ -20,7 +20,7 @@ public abstract class Computation {
 	public static Computation getComputation(String calculation, Calculator calc, String operators)
 	                throws CalculationException {
 
-		String[] parts = calculation.split("\\s");
+		String[] parts = calculation.split("\\s+");
 
 		try {
 			if (parts.length == 0) {

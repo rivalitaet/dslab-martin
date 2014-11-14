@@ -6,12 +6,14 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Scanner;
 
+import shell.AbstractShell;
 import shell.CliShell;
 import shell.Command;
-import shell.AbstractShell;
 import util.Config;
+import util.StringUtils;
 
 public class Client implements IClientCli {
 
@@ -200,6 +202,7 @@ public class Client implements IClientCli {
 	@Command
 	@Override
 	public String compute(String calculation) throws IOException {
+		calculation = StringUtils.join(" ", Arrays.asList(calculation.split("\\s+")));
 		sendLine(String.format("@COMPUTE %s", calculation));
 		return receiveLine();
 	}

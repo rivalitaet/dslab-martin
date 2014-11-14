@@ -2,12 +2,14 @@ package controller;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 
 import model.computation.CalculationException;
 import model.computation.Computation;
 import shell.AbstractShell;
 import shell.Command;
 import shell.SocketShell;
+import util.StringUtils;
 
 public class ClientConnection implements Runnable {
 
@@ -101,6 +103,8 @@ public class ClientConnection implements Runnable {
 		if (!isLoggedIn()) {
 			return "error:login_first";
 		}
+
+		calculation = StringUtils.join(" ", Arrays.asList(calculation.split("\\s+")));
 
 		Computation computation = null;
 		try {
